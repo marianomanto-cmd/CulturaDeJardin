@@ -7,7 +7,8 @@ interface Props {
   alt: string;
   /** Proporción del marco, p. ej. '4/5'. El marco reserva el espacio: CLS 0. */
   proporcion: string;
-  sizes: string;
+  /** Obligatorio salvo con `anchoFijo`, que resuelve el srcset por su cuenta. */
+  sizes?: string;
   className?: string;
   style?: CSSProperties;
   /** Fuerza del parallax interno; 0 lo desactiva. */
@@ -17,6 +18,13 @@ interface Props {
   calidad?: number;
   /** Escala extra al pasar el puntero. */
   zoomHover?: boolean;
+  /**
+   * Ancho máximo real de la pieza, en px. Cambia el srcset a 1x/2x en vez de
+   * la lista completa de anchos. Hace falta en la marquesina: sus figuras
+   * quedan fuera de pantalla en horizontal y ahí Chrome elige el candidato
+   * más grande de la lista sin importar lo que diga `sizes`.
+   */
+  anchoFijo?: number;
 }
 
 /**
@@ -39,10 +47,24 @@ export default function ImagenRevelada({
   parallax = 0,
   demora = 0,
   prioridad = false,
-  calidad = 76,
+  calidad = 92,
   zoomHover = false,
+  anchoFijo,
 }: Props) {
-  const capa = (
+  const clases = clsx('cj-foto', zoomHover && 'cj-foto--zoom');
+  const [num, den] = proporcion.split('/').map((n) => Number(n.trim()));
+  const capa = anchoFijo ? (
+    <Image
+      src={src}
+      alt={alt}
+      width={anchoFijo}
+      height={Math.round((anchoFijo * (den || 1)) / (num || 1))}
+      quality={calidad}
+      priority={prioridad}
+      loading={prioridad ? undefined : 'lazy'}
+      className={clsx(clases, 'absolute inset-0 h-full w-full')}
+    />
+  ) : (
     <Image
       src={src}
       alt={alt}
@@ -51,7 +73,7 @@ export default function ImagenRevelada({
       quality={calidad}
       priority={prioridad}
       loading={prioridad ? undefined : 'lazy'}
-      className={clsx('cj-foto', zoomHover && 'cj-foto--zoom')}
+      className={clases}
     />
   );
 

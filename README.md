@@ -76,6 +76,14 @@ Tres decisiones que conviene conocer antes de tocar esto:
   rectángulo que mide el `IntersectionObserver`: la razón de intersección queda
   en cero, el reveal no se dispara nunca y la foto no aparece más. Por eso
   `ImagenRevelada` observa el envoltorio y recorta una capa interna.
+- **La máscara de cada palabra recorta los dos ejes.** `overflow: hidden` no se
+  puede limitar a la vertical: si un eje deja de ser `visible`, el otro pasa a
+  `auto`. El rasgo descendente de la «p» de Rouge Script se va de costado, no
+  sólo hacia abajo, así que `.cj-palabra` lleva relleno en los cuatro lados con
+  margen negativo que devuelve el borde exacto. El valor sale de medir: contra
+  el mismo texto sin máscara, 0,2em laterales ya dan cero píxeles de diferencia.
+  Si se cambia el relleno inferior hay que revisar el viaje de la palabra
+  (`translate3d(0, 170%, 0)`), que tiene que superar la caja completa.
 - **El estado oculto sólo se aplica bajo `html[data-cj-reveal]`**, atributo que
   pone un script bloqueante en el `<head>` y que un failsafe retira si React no
   llega a montar. Sin JavaScript no se oculta nada.
@@ -91,13 +99,37 @@ Medido sobre el build de producción, escritorio 1440×900:
 
 | | |
 |---|---|
-| LCP en reposo | 276 ms · 1,37 s con 3G rápida y CPU 4× |
+| LCP en reposo | 284 ms · 1,31 s con 3G rápida y CPU 4× |
 | CLS | 0 |
 | axe (WCAG 2.2 AA + best practice) | 0 violaciones en escritorio, móvil y menú abierto |
-| Peso inicial | ~521 KB · 127 KB de JavaScript |
+| Peso inicial | ~588 KB · 127 KB de JavaScript |
+
+### Fotografías: el paquete topa en 1600 px
+
+Los doce archivos entregados miden 1600 px de ancho como máximo (uno, 1536) y
+venían en WebP con calidad 0,76. Los originales que menciona el handoff —JPEG de
+300 dpi, entre 2 y 8 MB— no vinieron en el paquete.
+
+Qué se hizo con lo que hay:
+
+- Los masters se volvieron a codificar en WebP calidad 95 con un realce suave.
+  Su peso no viaja al visitante: son sólo la entrada de `next/image`, así que
+  conviene guardarlos lo más limpios posible.
+- La calidad de entrega subió de 76 a 92. A 76, el AVIF empastaba el follaje y
+  la grava; el salto se nota en cualquier foto con textura fina.
+- La marquesina de láminas pedía el candidato de 1920 px para cajas de 380 px:
+  Chrome elige el mayor del `srcset` cuando la figura queda fuera de pantalla en
+  horizontal, sin importar lo que diga `sizes`. Se resolvió con medida
+  intrínseca (`anchoFijo`), que acota el `srcset` a 1x/2x. Son unos 3 MB menos.
+
+**Lo que no se puede resolver desde acá:** el masthead ocupa el ancho completo,
+así que en una pantalla retina de 1440 px pide 2880 px y el archivo tiene 1600.
+Para que el hero se vea nítido en retina hacen falta los originales.
 
 ### Pendientes del cliente
 
+0. **Fotografías originales** en su resolución completa, sobre todo la del
+   masthead.
 1. **Láminas botánicas definitivas.** La galería usa fotografías de las especies;
    las ilustraciones anatómicas entran en el mismo slot 3:4 sin tocar el layout.
 2. **PDFs de las cuatro descargas.** Hoy las tarjetas informan
@@ -151,5 +183,10 @@ galería apunta a la foto que de verdad muestra esa especie.
   `--color-oip-claro` (`#d9849b`) para el rótulo de ciclo sobre fondo noche y se
   subieron las opacidades de los rótulos del pie.
 - **Interludio en video** entre el manifiesto y el pensamiento jardinero, a
-  partir del material entregado por el cliente. Carga diferida, silenciado, con
-  control de pausa y póster fijo bajo `prefers-reduced-motion`.
+  partir del material entregado por el cliente, recortado antes del rótulo
+  «muy pronto». Carga diferida, silenciado y póster fijo bajo
+  `prefers-reduced-motion`. Va **sin control de pausa** por decisión de diseño:
+  el criterio 2.2.2 de WCAG pide un mecanismo para detener el movimiento
+  automático de más de cinco segundos, y acá lo único que lo cubre es
+  `prefers-reduced-motion`. Si hiciera falta cumplirlo de forma estricta, el
+  control puede volver mostrándose sólo al pasar el puntero o al recibir foco.

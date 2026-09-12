@@ -252,11 +252,14 @@
     display: inline-block;
     overflow: hidden;
     vertical-align: bottom;
-    /* Aire para astas y colas: la máscara no debe comerse ningún trazo.
+    /* Aire para astas, colas y rasgos. El de Rouge Script en «presencia» se
+     va de costado, no sólo hacia abajo, y overflow:hidden recorta los dos
+     ejes: medido contra el mismo texto sin máscara, 0,2em laterales ya dan
+     cero píxeles de diferencia; 0,32em deja margen para otros cuerpos.
      El margen negativo devuelve el borde exacto, así el vertical-align
      sigue alineando las palabras aunque tengan cuerpos distintos. */
-    padding-block: 0.34em 0.28em;
-    margin-block: -0.34em -0.28em;
+    padding: 0.34em 0.32em 0.5em;
+    margin: -0.34em -0.32em -0.5em;
   }
   .cj-palabra__in {
     display: inline-block;
@@ -264,7 +267,7 @@
     transition: transform 0.95s var(--ease-cj);
   }
   html[data-cj-reveal] [data-reveal='texto']:not([data-rv]) .cj-palabra__in {
-    transform: translate3d(0, 145%, 0);
+    transform: translate3d(0, 170%, 0);
   }
 
   /* 3 · Fotos: cortina de clip-path + escala que se suelta. */
@@ -885,6 +888,6 @@
   /* El titular del masthead espera al telón: las palabras suben recién cuando
      los paneles se abren, no mientras el telón las tapa. */
   html[data-cj-curtain='corriendo'] #cjHeroTxt .cj-palabra__in {
-    transform: translate3d(0, 145%, 0);
+    transform: translate3d(0, 170%, 0);
   }
 }

@@ -52,7 +52,7 @@ export default function Laminas() {
                 src={lamina.img}
                 alt={lamina.alt}
                 proporcion="3/4"
-                sizes="(max-width:475px) 80vw, 380px"
+                anchoFijo={380}
                 zoomHover
                 style={{ background: '#0C1F19' }}
               />

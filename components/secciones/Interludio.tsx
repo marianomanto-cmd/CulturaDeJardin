@@ -14,7 +14,6 @@ export default function Interludio() {
   const marco = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const [cargado, setCargado] = useState(false);
-  const [enMarcha, setEnMarcha] = useState(false);
   const [reducido, setReducido] = useState(false);
 
   useEffect(() => {
@@ -41,18 +40,8 @@ export default function Interludio() {
   useEffect(() => {
     const v = video.current;
     if (!v || !cargado || reducido) return;
-    v.play().catch(() => setEnMarcha(false));
+    v.play().catch(() => undefined);
   }, [cargado, reducido]);
-
-  const alternar = () => {
-    const v = video.current;
-    if (!v) return;
-    if (v.paused) {
-      void v.play().catch(() => undefined);
-    } else {
-      v.pause();
-    }
-  };
 
   return (
     <section
@@ -74,8 +63,6 @@ export default function Interludio() {
               controls={false}
               tabIndex={-1}
               aria-hidden="true"
-              onPlay={() => setEnMarcha(true)}
-              onPause={() => setEnMarcha(false)}
             >
               <source src="/assets/video/pradera.webm" type="video/webm" />
               <source
@@ -92,7 +79,7 @@ export default function Interludio() {
               aria-hidden="true"
               fill
               sizes="100vw"
-              quality={72}
+              quality={88}
               className="object-cover"
             />
           )}
@@ -107,18 +94,6 @@ export default function Interludio() {
               'linear-gradient(180deg,rgba(7,19,15,.42) 0%,rgba(7,19,15,.12) 34%,rgba(7,19,15,.14) 62%,rgba(7,19,15,.52) 100%)',
           }}
         />
-
-        {cargado ? (
-          <button
-            type="button"
-            onClick={alternar}
-            className="cj-sobre-oscuro absolute bottom-[clamp(16px,3vw,28px)] right-[clamp(16px,3vw,28px)] flex h-11 min-w-11 items-center gap-2 rounded-full border border-[rgba(244,239,230,.34)] bg-[rgba(7,19,15,.42)] px-4 text-[10px] uppercase tracking-[.2em] text-papel backdrop-blur-sm transition-colors duration-300 hover:border-papel hover:bg-[rgba(7,19,15,.66)]"
-          >
-            <span aria-hidden="true">{enMarcha ? '❚❚' : '▶'}</span>
-            {enMarcha ? 'Pausar' : 'Reproducir'}
-            <span className="cj-solo-lectores"> el video de la pradera</span>
-          </button>
-        ) : null}
       </div>
     </section>
   );

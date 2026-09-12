@@ -75,7 +75,7 @@ export default function Canteros() {
                     alt={e.alt}
                     fill
                     sizes="(max-width:1040px) 100vw, 620px"
-                    quality={76}
+                    quality={92}
                     loading="lazy"
                     className="cj-foto"
                     style={{ opacity: activo === i ? 1 : 0 }}

@@ -25,7 +25,7 @@ export default function Masthead() {
           priority
           fetchPriority="high"
           sizes="100vw"
-          quality={78}
+          quality={92}
           className="object-cover opacity-90"
         />
       </div>
