@@ -1,0 +1,29 @@
+# Cultura de Jardín
+
+> Proyecto editorial de jardinería y paisajismo para el hemisferio sur.
+> Compendio taxonómico, láminas botánicas y guías de manejo estacional.
+
+## Contenido principal
+
+- [Nuestra esencia](/#esencia): el jardín como refugio cotidiano y acto de presencia.
+- [Pensamiento jardinero](/#pensamiento): taxonomía y lámina en la misma página, relevo
+  ecológico y registro fenológico sistemático.
+- [Compendio taxonómico](/#compendio): 12 fichas binomiales con familia, requerimiento
+  lumínico, régimen hídrico, escala adulta y estrato.
+- [Ciclos OIP y PVO](/#relevo): calendario de relevo mes a mes para lograr canteros
+  continuos sin claros. OIP son las herbáceas activas en Otoño–Invierno–Primavera;
+  PVO las de Primavera–Verano–Otoño.
+- [Diseño de canteros](/#canteros): fondo estructural, medio y primer plano.
+- [La brújula del jardinero](/#brujula): orientaciones N/E/S/O en el hemisferio sur y
+  método del test de sombra.
+- [Galería de láminas](/#laminas): disección de flores, morfología foliar, sistemas
+  radiculares y fructificación.
+- [Historias de raíces](/#historias): Carlos Thays, Roberto Burle Marx, Sonia Berjman y
+  las mujeres botánicas.
+- [Material imprimible](/#descargas): planillas de seguimiento fenológico, inventario de
+  semillas, sobres de recolección y checklist estacional.
+- [Interrogantes clave](/#preguntas): 8 preguntas frecuentes respondidas.
+
+## Contacto
+
+- WhatsApp: bitácora estacional y planillas de registro fenológico.
