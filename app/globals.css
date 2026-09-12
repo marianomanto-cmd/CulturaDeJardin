@@ -1,0 +1,890 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Tokens de marca — manual Cultura de Jardín, sin desvíos.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-pino: #157174;
+  --color-pino-claro: #5fa9a0;
+  --color-borgona: #4a0024;
+  --color-borgona-claro: #d9a8bc;
+  --color-oip: #8e2a4c;
+  /* Tinte del OIP para texto sobre fondo oscuro: #8e2a4c sólo llega a 2,1:1. */
+  --color-oip-claro: #d9849b;
+  --color-noche: #07130f;
+  --color-papel: #f4efe6;
+  --color-piedra: #c9c2b7;
+  --color-tinta: #2f2a26;
+  --color-tinta-suave: #55504a;
+  /* Antes #8a8177: no alcanzaba 4,5:1 a 9–11,5 px sobre papel ni sobre blanco. */
+  --color-gris-dato: #726a5e;
+
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+  --font-script: var(--font-rouge), cursive;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --ease-cj: cubic-bezier(0.22, 0.61, 0.24, 1);
+}
+
+@layer components {
+  /* ------------------------------------------------------------------
+     Base
+     ------------------------------------------------------------------ */
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-papel);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    overflow-x: clip;
+  }
+
+  a {
+    color: var(--color-pino);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-borgona);
+  }
+  img {
+    display: block;
+    max-width: 100%;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--color-pino);
+    color: var(--color-papel);
+  }
+
+  :where(a, button, input, summary):focus-visible {
+    outline: 2px solid var(--color-pino);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .cj-sobre-oscuro :where(a, button, input):focus-visible {
+    outline-color: var(--color-pino-claro);
+  }
+
+  .cj-solo-lectores {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  #cjLinks::-webkit-scrollbar,
+  #cjLam::-webkit-scrollbar {
+    height: 0;
+  }
+
+  /* ------------------------------------------------------------------
+     Telón: compuerta declarativa.
+     El script bloqueante de <head> marca data-cj-curtain="corriendo" sólo si
+     el telón va a correr de verdad. Sin JS, con reduced-motion o en la segunda
+     visita de la sesión el atributo nunca aparece y todo se ve de entrada:
+     nada del contenido depende de que el telón termine.
+     ------------------------------------------------------------------ */
+  html[data-cj-curtain='corriendo'],
+  html[data-cj-curtain='corriendo'] body {
+    overflow: hidden;
+  }
+
+  html[data-cj-curtain='corriendo'] #cjHeroTxt {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+  html[data-cj-curtain='corriendo'] #cjNav {
+    opacity: 0;
+    transform: translate3d(0, -16px, 0);
+  }
+  html[data-cj-curtain='corriendo'] #cjWa {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  #cjHeroTxt {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 1.1s ease 0.1s,
+      transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s;
+  }
+  #cjNav {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 0.9s ease,
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      background 0.45s ease,
+      backdrop-filter 0.45s ease,
+      border-color 0.45s ease;
+  }
+  #cjWa {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 0.7s var(--ease-cj),
+      transform 0.7s var(--ease-cj),
+      background 0.4s ease;
+  }
+  /* La navegación y el botón entran 420 ms después del masthead. */
+  html[data-cj-curtain='abriendo'] #cjNav,
+  html[data-cj-curtain='abriendo'] #cjWa {
+    transition-delay: 0.42s;
+  }
+
+  /* ------------------------------------------------------------------
+     Animaciones
+     ------------------------------------------------------------------ */
+  @keyframes cjDraw {
+    from {
+      -webkit-mask-position:
+        center center,
+        0% 0%;
+      mask-position:
+        center center,
+        0% 0%;
+    }
+    to {
+      -webkit-mask-position:
+        center center,
+        0% 100%;
+      mask-position:
+        center center,
+        0% 100%;
+    }
+  }
+  @keyframes cjNib {
+    0% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    86% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes cjUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes cjFade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes cjBob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(8px);
+    }
+  }
+  @keyframes cjMarquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .cj-marquesina {
+    animation: cjMarquee 64s linear infinite;
+  }
+  .cj-marquesina:hover,
+  .cj-marquesina:focus-within {
+    animation-play-state: paused;
+  }
+
+  /* ------------------------------------------------------------------
+     Reveal al scroll — un solo IntersectionObserver marca data-rv="1".
+     El estado oculto sólo se aplica bajo html[data-cj-reveal], atributo que
+     pone el script bloqueante del head y que un failsafe retira si el JS
+     nunca llega a montar. Sin JS no se oculta nada.
+     ------------------------------------------------------------------ */
+
+  /* 1 · Reveal base: sube y aparece. */
+  [data-reveal=''] {
+    transition:
+      opacity 1.05s var(--ease-cj) var(--cj-reveal-delay, 0ms),
+      transform 1.05s var(--ease-cj) var(--cj-reveal-delay, 0ms);
+  }
+  html[data-cj-reveal] [data-reveal='']:not([data-rv]) {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+
+  /* 2 · Titulares por palabras: cada una viaja dentro de su máscara. */
+  .cj-texto {
+    /* El texto se corta por palabra: sin esto, una palabra suelta desbordaría. */
+    text-wrap: balance;
+  }
+  .cj-palabra {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    /* Aire para astas y colas: la máscara no debe comerse ningún trazo.
+     El margen negativo devuelve el borde exacto, así el vertical-align
+     sigue alineando las palabras aunque tengan cuerpos distintos. */
+    padding-block: 0.34em 0.28em;
+    margin-block: -0.34em -0.28em;
+  }
+  .cj-palabra__in {
+    display: inline-block;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.95s var(--ease-cj);
+  }
+  html[data-cj-reveal] [data-reveal='texto']:not([data-rv]) .cj-palabra__in {
+    transform: translate3d(0, 145%, 0);
+  }
+
+  /* 3 · Fotos: cortina de clip-path + escala que se suelta. */
+  .cj-cortina {
+    position: relative;
+  }
+  .cj-marco {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1.25s var(--ease-cj) var(--cj-reveal-delay, 0ms);
+  }
+  .cj-cortina > .cj-marco {
+    position: absolute;
+    inset: 0;
+  }
+  html[data-cj-reveal] [data-reveal='cortina']:not([data-rv]) > .cj-marco {
+    clip-path: inset(0 0 100% 0);
+  }
+  .cj-foto {
+    object-fit: cover;
+    transform: scale(1);
+    transition:
+      transform 1.5s var(--ease-cj) var(--cj-reveal-delay, 0ms),
+      opacity 0.5s ease;
+  }
+  html[data-cj-reveal] [data-reveal='cortina']:not([data-rv]) .cj-foto {
+    transform: scale(1.12);
+  }
+  .cj-foto--zoom {
+    transition:
+      transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1),
+      opacity 0.5s ease;
+  }
+  .cj-marco:hover .cj-foto--zoom,
+  .cj-marco:focus-within .cj-foto--zoom {
+    transform: scale(1.06);
+  }
+  /* Capa interna que se desplaza con el scroll: sobresale para no dejar borde. */
+  .cj-parallax {
+    position: absolute;
+    inset: -7% 0;
+    will-change: transform;
+  }
+
+  /* 4 · Listas escalonadas: cada hijo entra detrás del anterior. */
+  .cj-lista-revelada > * {
+    transition-delay: calc(var(--cj-i, 0) * var(--cj-paso, 90ms));
+  }
+
+  /* ------------------------------------------------------------------
+     Header
+     ------------------------------------------------------------------ */
+  #cjNav[data-solido='1'] {
+    background: rgba(244, 239, 230, 0.92);
+    backdrop-filter: saturate(150%) blur(16px);
+    -webkit-backdrop-filter: saturate(150%) blur(16px);
+    border-bottom-color: rgba(74, 0, 36, 0.12);
+  }
+  #cjNav[data-oculto='1'] {
+    transform: translate3d(0, -104%, 0);
+  }
+  #cjNavMark {
+    background: var(--color-papel);
+    transition: background 0.45s ease;
+  }
+  #cjNav[data-solido='1'] #cjNavMark {
+    background: var(--color-borgona);
+  }
+
+  .cj-nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding-block: 5px;
+    flex: none;
+    font-size: 10px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 230, 0.7);
+    transition: color 0.4s var(--ease-cj);
+  }
+  .cj-nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.5s var(--ease-cj);
+  }
+  .cj-nav-link:hover::after,
+  .cj-nav-link[data-activo='1']::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+  #cjNav[data-solido='1'] .cj-nav-link {
+    color: rgba(74, 0, 36, 0.6);
+  }
+  .cj-nav-link[data-activo='1'] {
+    color: var(--color-papel);
+  }
+  #cjNav[data-solido='1'] .cj-nav-link[data-activo='1'] {
+    color: var(--color-borgona);
+  }
+
+  /* ------------------------------------------------------------------
+     Botones
+     ------------------------------------------------------------------ */
+  .cj-magnetico {
+    display: inline-flex;
+    will-change: transform;
+  }
+
+  .cj-pildora {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    padding: 15px 28px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    isolation: isolate;
+    transition: color 0.45s var(--ease-cj);
+  }
+  /* Relleno que sube desde abajo al pasar el puntero. */
+  .cj-pildora::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--cj-relleno, var(--color-papel));
+    transform: translate3d(0, 101%, 0);
+    transition: transform 0.6s var(--ease-cj);
+  }
+  .cj-pildora:hover::before,
+  .cj-pildora:focus-visible::before {
+    transform: translate3d(0, 0, 0);
+  }
+  .cj-pildora:hover,
+  .cj-pildora:focus-visible {
+    color: var(--cj-relleno-texto, var(--color-noche));
+  }
+
+  .cj-pildora--solida {
+    background: var(--color-pino);
+    color: var(--color-papel);
+  }
+  .cj-pildora--linea {
+    border: 1px solid rgba(244, 239, 230, 0.3);
+    color: var(--color-papel);
+    --cj-relleno: rgba(244, 239, 230, 0.12);
+    --cj-relleno-texto: var(--color-papel);
+  }
+  .cj-pildora--linea:hover,
+  .cj-pildora--linea:focus-visible {
+    border-color: var(--color-papel);
+  }
+
+  /* Flecha que se desliza en las tarjetas de descarga. */
+  .cj-flecha {
+    display: inline-block;
+    transition: transform 0.55s var(--ease-cj);
+  }
+  .cj-tarjeta-descarga:hover .cj-flecha {
+    transform: translate3d(4px, 4px, 0);
+  }
+
+  /* ------------------------------------------------------------------
+     Cursor
+     ------------------------------------------------------------------ */
+  #cjCursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(21, 113, 116, 0.55);
+    pointer-events: none;
+    opacity: 0;
+    transition:
+      opacity 0.35s ease,
+      width 0.4s var(--ease-cj),
+      height 0.4s var(--ease-cj),
+      background 0.4s ease,
+      border-color 0.4s ease;
+    will-change: transform;
+    mix-blend-mode: difference;
+    filter: invert(1);
+  }
+  #cjCursor[data-visible='1'] {
+    opacity: 1;
+  }
+  #cjCursor[data-sobre='1'] {
+    width: 56px;
+    height: 56px;
+    background: rgba(21, 113, 116, 0.14);
+    border-color: rgba(21, 113, 116, 0.8);
+  }
+  @media (pointer: coarse) {
+    #cjCursor {
+      display: none;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Marquesina de láminas
+     ------------------------------------------------------------------ */
+  .cj-marquesina {
+    display: flex;
+    width: max-content;
+    animation: cjMarquee 64s linear infinite;
+    will-change: transform;
+  }
+  .cj-marquesina-wrap:hover .cj-marquesina,
+  .cj-marquesina-wrap:focus-within .cj-marquesina {
+    animation-play-state: paused;
+  }
+
+  /* ------------------------------------------------------------------
+     Animaciones
+     ------------------------------------------------------------------ */
+  @keyframes cjDraw {
+    from {
+      -webkit-mask-position:
+        center center,
+        0% 0%;
+      mask-position:
+        center center,
+        0% 0%;
+    }
+    to {
+      -webkit-mask-position:
+        center center,
+        0% 100%;
+      mask-position:
+        center center,
+        0% 100%;
+    }
+  }
+  @keyframes cjNib {
+    0% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    86% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes cjUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes cjFade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes cjBob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(8px);
+    }
+  }
+  @keyframes cjMarquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     prefers-reduced-motion: se apaga todo el movimiento, no el contenido.
+     ------------------------------------------------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+      scroll-behavior: auto !important;
+    }
+    html[data-cj-reveal] [data-reveal='']:not([data-rv]),
+    html[data-cj-reveal] [data-reveal='cortina']:not([data-rv]),
+    html[data-cj-reveal] [data-reveal='texto']:not([data-rv]) .cj-palabra__in {
+      opacity: 1;
+      transform: none;
+      clip-path: none;
+    }
+    .cj-marquesina {
+      animation: none;
+      width: auto;
+    }
+    .cj-marquesina-wrap {
+      overflow-x: auto;
+    }
+    .cj-parallax {
+      inset: 0;
+      transform: none !important;
+    }
+    #cjCursor {
+      display: none;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Telón: visible sólo cuando la compuerta dice que corre.
+     ------------------------------------------------------------------ */
+  #cjCurtain {
+    display: none;
+  }
+  html[data-cj-curtain='corriendo'] #cjCurtain,
+  html[data-cj-curtain='abriendo'] #cjCurtain {
+    display: block;
+  }
+
+  /* Salto al contenido: sólo visible al tabular. */
+  .cj-saltar {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 300;
+    padding: 14px 22px;
+    background: var(--color-borgona);
+    color: var(--color-papel);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .cj-saltar:focus {
+    left: 12px;
+    top: 12px;
+    color: var(--color-papel);
+  }
+
+  /* ==================================================================
+     Sistema tipográfico y de maquetación
+     Tamaños fluidos con clamp(); único quiebre estructural en 1040 px.
+     ================================================================== */
+  .cj-wrap {
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+  }
+
+  .cj-seccion {
+    position: relative;
+    padding: clamp(72px, 11vw, 150px) clamp(20px, 5vw, 64px);
+  }
+  .cj-seccion--ancha {
+    padding-inline: 0;
+  }
+  .cj-seccion--papel {
+    background: var(--color-papel);
+  }
+  .cj-seccion--blanco {
+    background: #ffffff;
+  }
+  .cj-seccion--noche {
+    background: var(--color-noche);
+  }
+  .cj-seccion--borgona {
+    background: var(--color-borgona);
+  }
+
+  .cj-antetitulo {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-pino);
+  }
+  .cj-antetitulo--claro {
+    color: var(--color-pino-claro);
+  }
+  .cj-antetitulo--rosa {
+    color: var(--color-borgona-claro);
+  }
+
+  .cj-titulo {
+    margin: 16px 0 14px;
+    font-size: clamp(27px, 4vw, 46px);
+    line-height: 1.12;
+    font-weight: 200;
+    letter-spacing: -0.01em;
+    color: var(--color-borgona);
+  }
+  .cj-titulo--claro {
+    color: var(--color-papel);
+  }
+
+  .cj-script {
+    font-family: var(--font-script);
+    line-height: 1;
+    color: var(--color-borgona);
+  }
+  .cj-script--grande {
+    font-size: clamp(38px, 6.4vw, 74px);
+  }
+  .cj-script--medio {
+    font-size: clamp(36px, 6vw, 68px);
+  }
+
+  .cj-cuerpo {
+    margin: 0;
+    font-size: clamp(14px, 1.5vw, 16.5px);
+    line-height: 1.78;
+    color: var(--color-tinta-suave);
+  }
+  .cj-cuerpo--claro {
+    color: rgba(244, 239, 230, 0.68);
+  }
+  .cj-cuerpo--rosa {
+    color: rgba(244, 239, 230, 0.72);
+  }
+
+  .cj-dato {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+  }
+
+  .cj-enfasis {
+    font-family: var(--font-script);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.16em;
+    color: var(--color-pino-claro);
+    letter-spacing: 0;
+  }
+  .cj-em {
+    display: inline-block;
+    font-style: normal;
+  }
+
+  /* Chips de filtro — 34 px de alto, nunca por debajo del objetivo táctil. */
+  .cj-chip {
+    flex: none;
+    border: 1px solid;
+    border-radius: 999px;
+    padding: 8px 15px;
+    min-height: 34px;
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    background: transparent;
+    transition:
+      background 0.45s var(--ease-cj),
+      border-color 0.45s var(--ease-cj),
+      color 0.45s var(--ease-cj),
+      transform 0.3s var(--ease-cj);
+    border-color: rgba(74, 0, 36, 0.2);
+    color: var(--color-tinta-suave);
+  }
+  .cj-chip:hover {
+    transform: translateY(-1px);
+  }
+  .cj-chip[aria-pressed='true'] {
+    background: var(--color-borgona);
+    border-color: var(--color-borgona);
+    color: var(--color-papel);
+  }
+  .cj-chip--oscuro {
+    border-color: rgba(244, 239, 230, 0.22);
+    color: rgba(244, 239, 230, 0.7);
+  }
+  .cj-chip--oscuro[aria-pressed='true'] {
+    background: var(--color-pino);
+    border-color: var(--color-pino);
+    color: var(--color-papel);
+  }
+
+  .cj-etiqueta-filtro {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-gris-dato);
+    min-width: 44px;
+  }
+
+  /* ------------------------------------------------------------------
+     Navegación — el quiebre de 1040 px lo decide CSS, no JavaScript.
+     ------------------------------------------------------------------ */
+  .cj-solo-desk {
+    display: none;
+  }
+  .cj-solo-movil {
+    display: flex;
+  }
+  @media (min-width: 1040px) {
+    .cj-solo-desk {
+      display: flex;
+    }
+    .cj-solo-movil {
+      display: none;
+    }
+  }
+
+  .cj-progreso {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    height: 2px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left center;
+    background: var(--color-pino);
+    will-change: transform;
+  }
+
+  .cj-barra {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: currentColor;
+    color: var(--color-papel);
+    transition:
+      transform 0.5s var(--ease-cj),
+      opacity 0.35s ease;
+  }
+  #cjNav[data-solido='1'] .cj-barra {
+    color: var(--color-borgona);
+  }
+  .cj-barra--a {
+    transform: translateY(3px) rotate(45deg);
+  }
+  .cj-barra--b {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+  /* Con el menú abierto el panel es noche: las barras vuelven a papel. */
+  html[data-cj-menu] #cjNav .cj-barra {
+    color: var(--color-papel);
+  }
+  html[data-cj-menu] #cjNav {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+    transform: none;
+  }
+  html[data-cj-menu] #cjNavMark {
+    background: var(--color-papel);
+  }
+
+  .cj-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 94;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 90px clamp(24px, 7vw, 48px) 48px;
+    background: var(--color-noche);
+    opacity: 0;
+    transform: translate3d(0, -18px, 0);
+    pointer-events: none;
+    transition:
+      opacity 0.5s ease,
+      transform 0.6s var(--ease-cj);
+  }
+  .cj-menu[data-abierto='1'] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    pointer-events: auto;
+  }
+  .cj-menu a {
+    position: relative;
+  }
+  .cj-menu nav a::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    bottom: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-pino-claro);
+    transition: width 0.5s var(--ease-cj);
+  }
+  .cj-menu nav a:hover::after,
+  .cj-menu nav a:focus-visible::after {
+    width: calc(100% - 8px);
+  }
+
+  /* El titular del masthead espera al telón: las palabras suben recién cuando
+     los paneles se abren, no mientras el telón las tapa. */
+  html[data-cj-curtain='corriendo'] #cjHeroTxt .cj-palabra__in {
+    transform: translate3d(0, 145%, 0);
+  }
+}
