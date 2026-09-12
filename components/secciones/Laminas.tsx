@@ -35,7 +35,7 @@ export default function Laminas() {
           (WCAG 2.2.2) y lo que vuelve alcanzable el scroll horizontal que el
           modo reduced-motion abre sobre este mismo contenedor. */}
       <div
-        className="cj-marquesina-wrap relative overflow-hidden"
+        className="cj-marquesina-wrap"
         style={{ WebkitMaskImage: MASCARA, maskImage: MASCARA }}
         tabIndex={0}
         role="group"

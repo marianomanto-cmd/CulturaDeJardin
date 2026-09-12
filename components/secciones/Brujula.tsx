@@ -73,7 +73,7 @@ export default function Brujula() {
                   tabIndex={activa === i ? 0 : -1}
                   onClick={() => setActiva(i)}
                   className={clsx(
-                    'absolute h-[46px] w-[46px] rounded-full border text-[13px] tracking-[.06em] transition-[background,border-color,color,transform] duration-500',
+                    'absolute h-[46px] w-[46px] rounded-full border text-[13px] tracking-[.06em] transition-[background,border-color,color,transform] duration-500 ease-[var(--ease-cj)]',
                     POSICION[i],
                     activa === i
                       ? 'scale-110 border-pino bg-pino text-papel'

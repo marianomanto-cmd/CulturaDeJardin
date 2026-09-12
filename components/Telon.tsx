@@ -14,6 +14,36 @@ import { bloquearScroll, liberarScroll } from '@/lib/scroll';
  * pintado. Acá sólo se ejecuta la secuencia. El orden retirar → coser → abrir
  * es un requisito: si la costura se adelanta, corta el monograma al medio.
  */
+/** Mientras el telón tapa la pantalla, nada de lo que hay detrás debe ser
+ *  alcanzable con el tabulador: es opaco, y el foco quedaría invisible. */
+function neutralizarFondo(inerte: boolean): void {
+  for (const hijo of Array.from(document.body.children)) {
+    if (hijo.id === 'cjCurtain' || hijo.tagName === 'SCRIPT') continue;
+    if (inerte) hijo.setAttribute('inert', '');
+    else hijo.removeAttribute('inert');
+  }
+}
+
+/** La apertura de los paneles. Vive aparte porque la disparan dos caminos:
+ *  el reloj de la secuencia y el atajo de «Saltar intro» / Escape. */
+function abrirPaneles(): void {
+  const $ = (id: string) => document.getElementById(id);
+  const top = $('cjTop');
+  const bot = $('cjBot');
+  const seam = $('cjSeam');
+  const intro = $('cjIntro');
+  if (intro) {
+    intro.style.opacity = '0';
+    intro.style.transform = 'translate3d(0,-18px,0)';
+  }
+  if (top) top.style.transform = 'translate3d(0,-100%,0)';
+  if (bot) bot.style.transform = 'translate3d(0,100%,0)';
+  if (seam) {
+    seam.style.transition = 'opacity .6s ease, transform 1.2s var(--ease-cj)';
+    seam.style.opacity = '0';
+  }
+}
+
 export default function Telon() {
   const [corriendo, setCorriendo] = useState(false);
   const temporizadores = useRef<number[]>([]);
@@ -28,13 +58,17 @@ export default function Telon() {
 
     const raiz = document.documentElement;
     raiz.setAttribute('data-cj-curtain', 'abriendo');
+    // Sin esto el atajo dejaba la pantalla negra 1,4 s y después cortaba de
+    // golpe: el atributo cambiaba pero los paneles nunca se movían.
+    abrirPaneles();
+    neutralizarFondo(false);
+    setCorriendo(false);
     if (bloqueado.current) {
       bloqueado.current = false;
       liberarScroll();
     }
     window.setTimeout(() => {
       raiz.removeAttribute('data-cj-curtain');
-      setCorriendo(false);
     }, 1400);
   }, []);
 
@@ -51,6 +85,7 @@ export default function Telon() {
     setCorriendo(true);
     bloquearScroll();
     bloqueado.current = true;
+    neutralizarFondo(true);
 
     const at = (ms: number, fn: () => void) => {
       temporizadores.current.push(window.setTimeout(fn, ms));
@@ -72,16 +107,10 @@ export default function Telon() {
     });
     // 3 · el telón se abre desde esa costura
     at(TELON.apertura, () => {
-      const top = $('cjTop');
-      const bot = $('cjBot');
-      const seam = $('cjSeam');
-      if (top) top.style.transform = 'translate3d(0,-100%,0)';
-      if (bot) bot.style.transform = 'translate3d(0,100%,0)';
-      if (seam) {
-        seam.style.transition = 'opacity .6s ease, transform 1.2s var(--ease-cj)';
-        seam.style.opacity = '0';
-      }
+      abrirPaneles();
       document.documentElement.setAttribute('data-cj-curtain', 'abriendo');
+      neutralizarFondo(false);
+      setCorriendo(false);
       if (bloqueado.current) {
         bloqueado.current = false;
         liberarScroll();
@@ -90,7 +119,6 @@ export default function Telon() {
     at(TELON.desmontaje, () => {
       cerrado.current = true;
       document.documentElement.removeAttribute('data-cj-curtain');
-      setCorriendo(false);
     });
 
     const alTeclear = (e: KeyboardEvent) => {
@@ -102,6 +130,7 @@ export default function Telon() {
     return () => {
       window.removeEventListener('keydown', alTeclear);
       pendientes.forEach(clearTimeout);
+      neutralizarFondo(false);
       if (bloqueado.current) {
         bloqueado.current = false;
         liberarScroll();

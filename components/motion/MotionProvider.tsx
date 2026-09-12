@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { BREAKPOINT } from '@/lib/constantes';
 import { iniciarRevelador, detenerRevelador } from '@/lib/revelar';
-import { registrarLenis, prefiereMenosMovimiento, irA } from '@/lib/scroll';
+import { registrarLenis, prefiereMenosMovimiento, irAConFoco } from '@/lib/scroll';
 
 interface Capa {
   el: HTMLElement;
@@ -142,8 +142,7 @@ export default function MotionProvider() {
       const href = a.getAttribute('href');
       if (!href || href === '#' || !document.querySelector(href)) return;
       e.preventDefault();
-      irA(href);
-      history.replaceState(null, '', href);
+      irAConFoco(href);
     };
     document.addEventListener('click', alClic);
 

@@ -146,6 +146,120 @@ test.describe('Cultura de Jardín', () => {
     expect(sitemap).toContain('<loc>');
   });
 
+  test('las anclas internas mueven el foco y escriben el hash', async ({ page }) => {
+    await saltarTelon(page);
+    await page.goto('/');
+    await page.waitForTimeout(600);
+
+    // El enlace de salto tiene que saltear de verdad.
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Saltar al contenido' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(900);
+    expect(await page.evaluate(() => document.activeElement?.id)).toBe('cjHero');
+
+    // Un ancla del cuerpo: foco al destino y hash en la URL. Se usa la del pie
+    // porque la barra se retira al bajar y su enlace queda fuera de pantalla.
+    await page.locator('footer').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+    await page.locator('footer').getByRole('link', { name: 'Compendio taxonómico' }).click();
+    await page.waitForTimeout(1200);
+    expect(await page.evaluate(() => document.activeElement?.id)).toBe('compendio');
+    expect(new URL(page.url()).hash).toBe('#compendio');
+  });
+
+  test('el telón deja el resto del sitio fuera del tabulador mientras corre', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(900);
+    await expect(page.locator('#cjCurtain')).toBeVisible();
+    const estado = await page.evaluate(() => ({
+      main: document.querySelector('main')?.hasAttribute('inert'),
+      nav: document.getElementById('cjNav')?.hasAttribute('inert'),
+      pie: document.querySelector('footer')?.hasAttribute('inert'),
+    }));
+    expect(estado).toEqual({ main: true, nav: true, pie: true });
+
+    // «Saltar intro» abre los paneles de verdad, no corta sobre negro.
+    await page.getByRole('button', { name: 'Saltar intro' }).click();
+    await page.waitForTimeout(250);
+    const paneles = await page.evaluate(() => ({
+      top: getComputedStyle(document.getElementById('cjTop')!).transform,
+      inerteMain: document.querySelector('main')?.hasAttribute('inert'),
+    }));
+    expect(paneles.top).not.toBe('none');
+    expect(paneles.inerteMain).toBe(false);
+    await page.waitForTimeout(1600);
+    await expect(page.locator('#cjCurtain')).toBeHidden();
+  });
+
+  test('el menú móvil devuelve el foco a la hamburguesa y la incluye en el ciclo', async ({
+    page,
+  }, info) => {
+    test.skip(info.project.name !== 'movil', 'sólo aplica bajo el quiebre de 1040 px');
+    await saltarTelon(page);
+    await page.goto('/');
+    const burger = page.getByRole('button', { name: 'Abrir menú' });
+    await burger.click();
+    // Tabular hasta el final del ciclo tiene que volver a la hamburguesa.
+    const focosDelCiclo: string[] = [];
+    for (let i = 0; i < 13; i += 1) {
+      await page.keyboard.press('Tab');
+      focosDelCiclo.push(
+        await page.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? ''),
+      );
+    }
+    expect(focosDelCiclo).toContain('Cerrar menú');
+  });
+
+  test('con reduced-motion el compendio filtra sin dejar las fichas invisibles', async ({
+    browser,
+  }) => {
+    const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    await page.goto('/');
+    await page.locator('#compendio').scrollIntoViewIfNeeded();
+    await page.getByRole('button', { name: 'Pleno sol', exact: true }).click();
+    await page.waitForTimeout(500);
+    const opacidades = await page.evaluate(() =>
+      [...document.querySelectorAll('#compendio article')].map((a) =>
+        Number(getComputedStyle(a).opacity),
+      ),
+    );
+    expect(opacidades.length).toBeGreaterThan(0);
+    expect(Math.min(...opacidades)).toBe(1);
+    await ctx.close();
+  });
+
+  test('con reduced-motion la galería de láminas se puede recorrer', async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    await page.goto('/');
+    await page.locator('#laminas').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    const cinta = await page.evaluate(() => {
+      const w = document.querySelector('.cj-marquesina-wrap') as HTMLElement;
+      return {
+        overflowX: getComputedStyle(w).overflowX,
+        desplazable: w.scrollWidth > w.clientWidth,
+      };
+    });
+    expect(cinta.overflowX).toBe('auto');
+    expect(cinta.desplazable).toBe(true);
+    await ctx.close();
+  });
+
+  test('el móvil recibe la variante liviana del video', async ({ page }, info) => {
+    test.skip(info.project.name !== 'movil', 'la variante chica es sólo hasta 640 px');
+    await saltarTelon(page);
+    await page.goto('/');
+    await page.locator('#esencia').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
+    await page.mouse.wheel(0, 1800);
+    await page.waitForTimeout(2500);
+    const src = await page.evaluate(() => document.querySelector('video')?.currentSrc ?? '');
+    expect(src).toContain('pradera-sm.');
+  });
+
   test('ningún objetivo interactivo baja del mínimo de 24×24 (WCAG 2.5.8)', async ({ page }) => {
     await saltarTelon(page);
     await page.goto('/');

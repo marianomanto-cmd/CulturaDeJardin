@@ -163,6 +163,29 @@ Los otros cuatro (`pradera-stipa-coreopsis`, `estrato-fondo-aguaribay`,
 Conviene renombrar los archivos en origen. Mientras tanto, cada pie de la
 galería apunta a la foto que de verdad muestra esa especie.
 
+## Hallazgos de la revisión adversarial
+
+Seis dimensiones buscaron defectos en paralelo y cada hallazgo pasó por un
+agente que intentaba refutarlo. De 44 reportados, 12 sobrevivieron y están
+corregidos:
+
+| Qué estaba mal | Dónde |
+|---|---|
+| La máscara por palabra recortaba el rasgo del manuscrito, también en horizontal | `app/globals.css` |
+| «Saltar intro» y Escape no abrían los paneles: pantalla negra 1,4 s y corte seco | `components/Telon.tsx` |
+| Con el telón puesto, todo el sitio tapado seguía en el orden de tabulación | `components/Telon.tsx` |
+| Ningún ancla movía el foco: «Saltar al contenido» no salteaba nada | `lib/scroll.ts` |
+| Los enlaces de la barra no escribían el hash en la URL | `components/SiteNav.tsx` |
+| La trampa de foco del menú excluía el botón que lo cierra | `components/SiteNav.tsx` |
+| Al cerrar el menú el foco se caía al `<body>` | `components/SiteNav.tsx` |
+| Con reduced-motion las fichas del compendio quedaban invisibles al filtrar | `app/globals.css` |
+| Con reduced-motion la galería no se podía recorrer: la utilidad pisaba al `@layer` | `app/globals.css` |
+| El móvil nunca recibía la variante liviana del video | `components/secciones/Interludio.tsx` |
+| Relevo, Canteros y Brújula habían perdido la curva `--ease-cj` | tres secciones |
+| El calendario interpolaba en 500 ms en vez de los 550 que fija el handoff | `components/secciones/Relevo.tsx` |
+
+Cada uno tiene su prueba de regresión en `tests/sitio.spec.ts`.
+
 ## Desvíos respecto del handoff, y por qué
 
 - **Sin `motion`/framer.** Todas las transiciones del prototipo son de CSS y el

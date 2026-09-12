@@ -486,6 +486,10 @@
   /* ------------------------------------------------------------------
      Marquesina de láminas
      ------------------------------------------------------------------ */
+  .cj-marquesina-wrap {
+    position: relative;
+    overflow: hidden;
+  }
   .cj-marquesina {
     display: flex;
     width: max-content;
@@ -577,6 +581,9 @@
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+      /* Sin esto el animation-delay en línea de las fichas sobrevive y, con
+         fill-mode both, quedan clavadas en el fotograma inicial (opacidad 0). */
+      animation-delay: 0ms !important;
       transition-duration: 0.01ms !important;
       transition-delay: 0ms !important;
       scroll-behavior: auto !important;

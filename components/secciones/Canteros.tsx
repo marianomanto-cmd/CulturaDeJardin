@@ -39,7 +39,7 @@ export default function Canteros() {
                   aria-pressed={seleccionado}
                   onClick={() => setActivo(i)}
                   className={clsx(
-                    'block w-full rounded-[3px] border p-5 text-left transition-[background,border-color,color] duration-500',
+                    'block w-full rounded-[3px] border p-5 text-left transition-[background,border-color,color] duration-500 ease-[var(--ease-cj)]',
                     seleccionado
                       ? 'border-borgona bg-borgona text-papel'
                       : 'border-[rgba(74,0,36,.16)] bg-transparent text-tinta hover:border-pino',

@@ -64,12 +64,19 @@ export default function Interludio() {
               tabIndex={-1}
               aria-hidden="true"
             >
-              <source src="/assets/video/pradera.webm" type="video/webm" />
+              {/* Gana el primer <source> cuyo type soporta y cuyo media coincide:
+                  los del móvil van primero o no se eligen nunca. */}
+              <source
+                src="/assets/video/pradera-sm.webm"
+                type="video/webm"
+                media="(max-width: 640px)"
+              />
               <source
                 src="/assets/video/pradera-sm.mp4"
                 type="video/mp4"
                 media="(max-width: 640px)"
               />
+              <source src="/assets/video/pradera.webm" type="video/webm" />
               <source src="/assets/video/pradera.mp4" type="video/mp4" />
             </video>
           ) : (

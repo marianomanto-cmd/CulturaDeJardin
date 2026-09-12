@@ -90,7 +90,7 @@ export default function Relevo() {
             return (
               <div
                 key={f.nombre}
-                className="grid grid-cols-[minmax(92px,26%)_1fr] items-center gap-2 rounded-[3px] px-2.5 py-[9px] transition-[background] duration-500"
+                className="grid grid-cols-[minmax(92px,26%)_1fr] items-center gap-2 rounded-[3px] px-2.5 py-[9px] transition-[background] duration-500 ease-[var(--ease-cj)]"
                 style={{ background: enEscena ? 'rgba(244,239,230,.055)' : 'transparent' }}
               >
                 <div className="flex min-w-0 flex-col gap-0.5 pr-3">
@@ -113,7 +113,7 @@ export default function Relevo() {
                     return (
                       <span
                         key={m.largo}
-                        className="block rounded-[2px] transition-[height,background,box-shadow] duration-500"
+                        className="block rounded-[2px] transition-[height,background,box-shadow] duration-[550ms] ease-[var(--ease-cj)]"
                         style={{
                           height: activo ? '15px' : '4px',
                           background: activo

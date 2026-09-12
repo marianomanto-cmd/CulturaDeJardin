@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { NAV_DESKTOP, SECCIONES } from '@/data/contenido';
 import { HREF_WA } from '@/data/sitio';
-import { bloquearScroll, irA, liberarScroll } from '@/lib/scroll';
+import { bloquearScroll, irAConFoco, liberarScroll } from '@/lib/scroll';
 
 /**
  * Navegación. El único quiebre estructural del sitio —1040 px— lo resuelve
@@ -17,7 +17,14 @@ export default function SiteNav() {
   const burger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
 
-  const cerrar = useCallback(() => setAbierto(false), []);
+  /** Al cerrar hay que reubicar el foco: si el panel se vuelve inert con el
+   *  foco adentro, se cae al <body> y el teclado pierde su lugar. */
+  const cerrar = useCallback((devolverFoco = true) => {
+    setAbierto(false);
+    if (devolverFoco && panel.current?.contains(document.activeElement)) {
+      burger.current?.focus();
+    }
+  }, []);
 
   useEffect(() => {
     const raiz = document.documentElement;
@@ -44,7 +51,12 @@ export default function SiteNav() {
       }
       if (e.key !== 'Tab' || !panel.current) return;
       // Trampa de foco: con el menú abierto el tabulador no puede salirse.
-      const focos = panel.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      // La hamburguesa entra en el ciclo aunque viva fuera del panel: es el
+      // único control que cierra, y dejarla afuera la vuelve inalcanzable.
+      const focos = [
+        ...(burger.current ? [burger.current] : []),
+        ...panel.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+      ];
       const primero = focos[0];
       const ultimo = focos[focos.length - 1];
       if (!primero || !ultimo) return;
@@ -64,7 +76,9 @@ export default function SiteNav() {
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1040px)');
     const alCambiar = () => {
-      if (mq.matches) setAbierto(false);
+      if (!mq.matches) return;
+      if (panel.current?.contains(document.activeElement)) burger.current?.focus();
+      setAbierto(false);
     };
     mq.addEventListener('change', alCambiar);
     return () => mq.removeEventListener('change', alCambiar);
@@ -72,9 +86,10 @@ export default function SiteNav() {
 
   const irYCerrar = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    cerrar();
+    // El foco viaja al destino, así que acá no se devuelve a la hamburguesa.
+    cerrar(false);
     // Esperamos a que el scroll se libere antes de pedirle a Lenis el viaje.
-    window.setTimeout(() => irA(href), 60);
+    window.setTimeout(() => irAConFoco(href), 60);
   };
 
   return (

@@ -50,6 +50,25 @@ export function irA(destino: string): void {
   }
 }
 
+/**
+ * Navegación interna completa: viaje, hash y foco.
+ *
+ * Mover el foco es lo que convierte un ancla en una navegación de verdad. Sin
+ * esto el «Saltar al contenido» no saltea nada —el siguiente Tab vuelve al
+ * principio— porque preventDefault() le quita al navegador el punto de partida
+ * de la navegación secuencial. Las secciones no son focalizables por sí solas,
+ * así que se les presta un tabindex="-1" al vuelo.
+ */
+export function irAConFoco(href: string): void {
+  const el = document.querySelector<HTMLElement>(href);
+  if (!el) return;
+  irA(href);
+  history.replaceState(null, '', href);
+  if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+  // preventScroll: el viaje lo maneja Lenis; el foco no debe saltar por su cuenta.
+  el.focus({ preventScroll: true });
+}
+
 export function prefiereMenosMovimiento(): boolean {
   if (typeof window === 'undefined' || !window.matchMedia) return false;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
