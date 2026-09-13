@@ -14,7 +14,10 @@ export default defineConfig({
     launchOptions: { executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium' },
   },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
+    {
+      name: 'desktop',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+    },
     { name: 'movil', use: { ...devices['Pixel 5'], viewport: { width: 390, height: 844 } } },
   ],
   webServer: process.env.BASE

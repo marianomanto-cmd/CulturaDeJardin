@@ -2,7 +2,9 @@ import { chromium } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
 const BASE = process.env.BASE || 'http://localhost:3000';
-const OUT = process.env.OUT || '/tmp/claude-0/-home-user-CulturaDeJardin/66568d8a-2a03-5c0c-981f-792947bd46dd/scratchpad/qa';
+const OUT =
+  process.env.OUT ||
+  '/tmp/claude-0/-home-user-CulturaDeJardin/66568d8a-2a03-5c0c-981f-792947bd46dd/scratchpad/qa';
 mkdirSync(OUT, { recursive: true });
 
 const errores = [];
@@ -44,7 +46,10 @@ const saltarTelon = `try{sessionStorage.setItem('cj:telon:visto','1')}catch(e){}
     ['desk', { width: 1440, height: 900 }],
     ['movil', { width: 390, height: 844 }],
   ]) {
-    const { ctx, page } = await nuevaPagina(browser, vp, { isMobile: nombre === 'movil', hasTouch: nombre === 'movil' });
+    const { ctx, page } = await nuevaPagina(browser, vp, {
+      isMobile: nombre === 'movil',
+      hasTouch: nombre === 'movil',
+    });
     await page.addInitScript(saltarTelon);
     await page.goto(BASE, { waitUntil: 'load' });
     await page.waitForTimeout(800);
@@ -63,7 +68,19 @@ const saltarTelon = `try{sessionStorage.setItem('cj:telon:visto','1')}catch(e){}
     await page.screenshot({ path: `${OUT}/${nombre}-completa.png`, fullPage: true });
 
     // Recortes por sección.
-    for (const id of ['cjHero', 'esencia', 'pensamiento', 'compendio', 'relevo', 'canteros', 'brujula', 'laminas', 'historias', 'descargas', 'preguntas']) {
+    for (const id of [
+      'cjHero',
+      'esencia',
+      'pensamiento',
+      'compendio',
+      'relevo',
+      'canteros',
+      'brujula',
+      'laminas',
+      'historias',
+      'descargas',
+      'preguntas',
+    ]) {
       const el = page.locator(`#${id}`);
       if (await el.count()) {
         await el.scrollIntoViewIfNeeded();
@@ -76,7 +93,11 @@ const saltarTelon = `try{sessionStorage.setItem('cj:telon:visto','1')}catch(e){}
 
   // ---- 3 · Estados interactivos ---------------------------------------
   {
-    const { ctx, page } = await nuevaPagina(browser, { width: 390, height: 844 }, { isMobile: true, hasTouch: true });
+    const { ctx, page } = await nuevaPagina(
+      browser,
+      { width: 390, height: 844 },
+      { isMobile: true, hasTouch: true },
+    );
     await page.addInitScript(saltarTelon);
     await page.goto(BASE, { waitUntil: 'load' });
     await page.waitForTimeout(600);
@@ -122,7 +143,10 @@ const saltarTelon = `try{sessionStorage.setItem('cj:telon:visto','1')}catch(e){}
 
   // ---- 4 · Sin JavaScript ---------------------------------------------
   {
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, javaScriptEnabled: false });
+    const ctx = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      javaScriptEnabled: false,
+    });
     const page = await ctx.newPage();
     await page.goto(BASE, { waitUntil: 'load' });
     await page.waitForTimeout(700);
@@ -132,13 +156,18 @@ const saltarTelon = `try{sessionStorage.setItem('cj:telon:visto','1')}catch(e){}
 
   // ---- 5 · prefers-reduced-motion --------------------------------------
   {
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+    const ctx = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      reducedMotion: 'reduce',
+    });
     const page = await ctx.newPage();
     await page.goto(BASE, { waitUntil: 'load' });
     await page.waitForTimeout(900);
     await page.screenshot({ path: `${OUT}/desk-reduced-motion.png` });
     const telonVisible = await page.locator('#cjCurtain').isVisible();
-    const heroOpacidad = await page.locator('#cjHeroTxt').evaluate((el) => getComputedStyle(el).opacity);
+    const heroOpacidad = await page
+      .locator('#cjHeroTxt')
+      .evaluate((el) => getComputedStyle(el).opacity);
     console.log(JSON.stringify({ reducedMotion: { telonVisible, heroOpacidad } }));
     await ctx.close();
   }

@@ -15,15 +15,15 @@ cp .env.example .env.local     # número de WhatsApp y origen canónico
 npm run dev                    # http://localhost:3000
 ```
 
-| Comando | Qué hace |
-|---|---|
-| `npm run dev` | servidor de desarrollo |
-| `npm run build` / `npm start` | build de producción y su servidor |
-| `npm run typecheck` | `tsc --noEmit` con strict + `noUncheckedIndexedAccess` |
-| `npm run lint` | ESLint (config de Next) |
-| `npm run format` | Prettier |
-| `npm test` | suite de Playwright: axe, teclado, sin JS, reduced-motion, SEO |
-| `npm run analyze` | build con el analizador de bundle |
+| Comando                       | Qué hace                                                       |
+| ----------------------------- | -------------------------------------------------------------- |
+| `npm run dev`                 | servidor de desarrollo                                         |
+| `npm run build` / `npm start` | build de producción y su servidor                              |
+| `npm run typecheck`           | `tsc --noEmit` con strict + `noUncheckedIndexedAccess`         |
+| `npm run lint`                | ESLint (config de Next)                                        |
+| `npm run format`              | Prettier                                                       |
+| `npm test`                    | suite de Playwright: axe, teclado, sin JS, reduced-motion, SEO |
+| `npm run analyze`             | build con el analizador de bundle                              |
 
 La suite usa el Chromium ya instalado en el contenedor
 (`/opt/pw-browsers/chromium`); no descarga navegadores. Para apuntarla a otro
@@ -31,9 +31,9 @@ origen: `BASE=https://… npx playwright test`.
 
 ## Variables de entorno
 
-| Variable | Para qué |
-|---|---|
-| `NEXT_PUBLIC_WHATSAPP` | número en formato internacional sin signos |
+| Variable               | Para qué                                                       |
+| ---------------------- | -------------------------------------------------------------- |
+| `NEXT_PUBLIC_WHATSAPP` | número en formato internacional sin signos                     |
 | `NEXT_PUBLIC_SITE_URL` | origen canónico: alimenta metadatos, JSON-LD, sitemap y robots |
 
 ## Estructura
@@ -61,14 +61,14 @@ Un solo `requestAnimationFrame` (`components/motion/MotionProvider.tsx`)
 concentra Lenis, el pintado por frame y el `IntersectionObserver` compartido.
 Todo lo visual vive en CSS; el JavaScript sólo escribe atributos.
 
-| Primitiva | Efecto |
-|---|---|
-| `Revelar` | la pieza sube 26 px y aparece |
-| `TextoRevelado` | titular revelado palabra por palabra, cada una en su máscara |
+| Primitiva        | Efecto                                                               |
+| ---------------- | -------------------------------------------------------------------- |
+| `Revelar`        | la pieza sube 26 px y aparece                                        |
+| `TextoRevelado`  | titular revelado palabra por palabra, cada una en su máscara         |
 | `ImagenRevelada` | cortina de `clip-path` + escala que se suelta, con parallax opcional |
-| `Magnetico` | atracción del puntero, sólo con mouse fino |
-| `Contador` | conteo ascendente al entrar en pantalla |
-| `Cursor` | anillo que sigue al puntero sin ocultar el cursor del sistema |
+| `Magnetico`      | atracción del puntero, sólo con mouse fino                           |
+| `Contador`       | conteo ascendente al entrar en pantalla                              |
+| `Cursor`         | anillo que sigue al puntero sin ocultar el cursor del sistema        |
 
 Tres decisiones que conviene conocer antes de tocar esto:
 
@@ -97,12 +97,12 @@ y el cursor. El contenido no depende de ninguno de ellos.
 
 Medido sobre el build de producción, escritorio 1440×900:
 
-| | |
-|---|---|
-| LCP en reposo | 284 ms · 1,31 s con 3G rápida y CPU 4× |
-| CLS | 0 |
+|                                   |                                                   |
+| --------------------------------- | ------------------------------------------------- |
+| LCP en reposo                     | 284 ms · 1,31 s con 3G rápida y CPU 4×            |
+| CLS                               | 0                                                 |
 | axe (WCAG 2.2 AA + best practice) | 0 violaciones en escritorio, móvil y menú abierto |
-| Peso inicial | ~588 KB · 127 KB de JavaScript |
+| Peso inicial                      | ~588 KB · 127 KB de JavaScript                    |
 
 ### Fotografías: el paquete topa en 1600 px
 
@@ -146,16 +146,16 @@ su texto alternativo declaraban. Los archivos se conservan con su nombre
 original; lo que se corrigió fue **a qué slot va cada foto y qué dice su `alt`**,
 porque un alt que describe otra cosa es un defecto de accesibilidad y de SEO.
 
-| Archivo | Qué muestra en realidad |
-|---|---|
-| `hero-muro-iris` | pradera de narcisos naturalizados junto a un arroyo |
-| `iris-germanica` | Achillea millefolium amarilla con follaje grisáceo |
-| `pradera-salvias` | cantero de vereda con alstroemerias y arbustos |
-| `jardin-seco-santolina` | láminas botánicas y cuaderno sobre mesa de trabajo |
-| `laminas-mesa-trabajo` | cantero elevado sobre muro de piedra |
-| `lilium-macizo` | Iris germanica púrpura en floración |
-| `narcissus-poeticus` | jardín seco con santolinas y gravas |
-| `achillea-millefolium` | borde seco de follaje gris |
+| Archivo                 | Qué muestra en realidad                             |
+| ----------------------- | --------------------------------------------------- |
+| `hero-muro-iris`        | pradera de narcisos naturalizados junto a un arroyo |
+| `iris-germanica`        | Achillea millefolium amarilla con follaje grisáceo  |
+| `pradera-salvias`       | cantero de vereda con alstroemerias y arbustos      |
+| `jardin-seco-santolina` | láminas botánicas y cuaderno sobre mesa de trabajo  |
+| `laminas-mesa-trabajo`  | cantero elevado sobre muro de piedra                |
+| `lilium-macizo`         | Iris germanica púrpura en floración                 |
+| `narcissus-poeticus`    | jardín seco con santolinas y gravas                 |
+| `achillea-millefolium`  | borde seco de follaje gris                          |
 
 Los otros cuatro (`pradera-stipa-coreopsis`, `estrato-fondo-aguaribay`,
 `estrato-borde-graminieas`, `salvia-leucantha`) sí coinciden.
@@ -170,34 +170,34 @@ agente que intentaba refutarlo. De 44 reportados, 17 sobrevivieron a la
 refutación y 13 más se verificaron a mano después, midiendo en el navegador.
 Todo lo confirmado está corregido:
 
-| Qué estaba mal | Dónde |
-|---|---|
-| La máscara por palabra recortaba el rasgo del manuscrito, también en horizontal | `app/globals.css` |
-| «Saltar intro» y Escape no abrían los paneles: pantalla negra 1,4 s y corte seco | `components/Telon.tsx` |
-| Con el telón puesto, todo el sitio tapado seguía en el orden de tabulación | `components/Telon.tsx` |
-| Ningún ancla movía el foco: «Saltar al contenido» no salteaba nada | `lib/scroll.ts` |
-| Los enlaces de la barra no escribían el hash en la URL | `components/SiteNav.tsx` |
-| La trampa de foco del menú excluía el botón que lo cierra | `components/SiteNav.tsx` |
-| Al cerrar el menú el foco se caía al `<body>` | `components/SiteNav.tsx` |
-| Con reduced-motion las fichas del compendio quedaban invisibles al filtrar | `app/globals.css` |
-| Con reduced-motion la galería no se podía recorrer: la utilidad pisaba al `@layer` | `app/globals.css` |
-| El móvil nunca recibía la variante liviana del video | `components/secciones/Interludio.tsx` |
-| Relevo, Canteros y Brújula habían perdido la curva `--ease-cj` | tres secciones |
-| El calendario interpolaba en 500 ms en vez de los 550 que fija el handoff | `components/secciones/Relevo.tsx` |
-| Tres de las cuatro orientaciones de la brújula no existían en el HTML servido | `components/secciones/Brujula.tsx` |
-| El menú móvil no scrolleaba: en pantallas bajas el CTA quedaba inalcanzable | `app/globals.css` |
-| El botón flotante tapaba de forma permanente la última línea del pie | `components/secciones/Pie.tsx` |
-| La marquesina recibía el foco sin indicador visible (contraste 1,01:1) | `app/globals.css` |
+| Qué estaba mal                                                                     | Dónde                                 |
+| ---------------------------------------------------------------------------------- | ------------------------------------- |
+| La máscara por palabra recortaba el rasgo del manuscrito, también en horizontal    | `app/globals.css`                     |
+| «Saltar intro» y Escape no abrían los paneles: pantalla negra 1,4 s y corte seco   | `components/Telon.tsx`                |
+| Con el telón puesto, todo el sitio tapado seguía en el orden de tabulación         | `components/Telon.tsx`                |
+| Ningún ancla movía el foco: «Saltar al contenido» no salteaba nada                 | `lib/scroll.ts`                       |
+| Los enlaces de la barra no escribían el hash en la URL                             | `components/SiteNav.tsx`              |
+| La trampa de foco del menú excluía el botón que lo cierra                          | `components/SiteNav.tsx`              |
+| Al cerrar el menú el foco se caía al `<body>`                                      | `components/SiteNav.tsx`              |
+| Con reduced-motion las fichas del compendio quedaban invisibles al filtrar         | `app/globals.css`                     |
+| Con reduced-motion la galería no se podía recorrer: la utilidad pisaba al `@layer` | `app/globals.css`                     |
+| El móvil nunca recibía la variante liviana del video                               | `components/secciones/Interludio.tsx` |
+| Relevo, Canteros y Brújula habían perdido la curva `--ease-cj`                     | tres secciones                        |
+| El calendario interpolaba en 500 ms en vez de los 550 que fija el handoff          | `components/secciones/Relevo.tsx`     |
+| Tres de las cuatro orientaciones de la brújula no existían en el HTML servido      | `components/secciones/Brujula.tsx`    |
+| El menú móvil no scrolleaba: en pantallas bajas el CTA quedaba inalcanzable        | `app/globals.css`                     |
+| El botón flotante tapaba de forma permanente la última línea del pie               | `components/secciones/Pie.tsx`        |
+| La marquesina recibía el foco sin indicador visible (contraste 1,01:1)             | `app/globals.css`                     |
 
 Y sobre peso, medido antes y después:
 
-| | Antes | Después |
-|---|---|---|
-| `cj-mark.png`, el recurso más pesado de la carga inicial | 155 KB | 31 KB |
-| Póster del interludio | 2 pedidos, 129 KB | 1 pedido, 55 KB |
-| Capas promovidas al terminar la carga | 73 | 13 |
-| `will-change` colgados tras recorrer la página | 20 | 6 |
-| Foto de Canteros en tablet (768 px, retina) | candidato 1920 | candidato 828 |
+|                                                          | Antes             | Después         |
+| -------------------------------------------------------- | ----------------- | --------------- |
+| `cj-mark.png`, el recurso más pesado de la carga inicial | 155 KB            | 31 KB           |
+| Póster del interludio                                    | 2 pedidos, 129 KB | 1 pedido, 55 KB |
+| Capas promovidas al terminar la carga                    | 73                | 13              |
+| `will-change` colgados tras recorrer la página           | 20                | 6               |
+| Foto de Canteros en tablet (768 px, retina)              | candidato 1920    | candidato 828   |
 
 El monograma se usa sólo como máscara CSS, así que se redujo a 1040 px con
 paleta: para una máscara lo único que cuenta es el alfa. La marquesina, además,

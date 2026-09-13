@@ -48,8 +48,17 @@ for (const [nombre, vp] of [
   if (nombre === 'movil') {
     await p.getByRole('button', { name: 'Abrir menú' }).click();
     await p.waitForTimeout(600);
-    const rm = await new AxeBuilder({ page: p }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    informe['movil-menu-abierto'] = { violaciones: rm.violations.map((v) => ({ id: v.id, impacto: v.impact, n: v.nodes.length, desc: v.help })) };
+    const rm = await new AxeBuilder({ page: p })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    informe['movil-menu-abierto'] = {
+      violaciones: rm.violations.map((v) => ({
+        id: v.id,
+        impacto: v.impact,
+        n: v.nodes.length,
+        desc: v.help,
+      })),
+    };
   }
   await ctx.close();
 }
