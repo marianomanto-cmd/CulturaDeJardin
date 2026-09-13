@@ -260,6 +260,54 @@ test.describe('Cultura de Jardín', () => {
     expect(src).toContain('pradera-sm.');
   });
 
+  test('las cuatro orientaciones de la brújula salen del servidor', async ({ request }) => {
+    const html = await (await request.get('/')).text();
+    for (const t of [
+      'Norte — la orientación más generosa',
+      'Este — sol naciente, suave',
+      'Sur — sombra fresca y estable',
+      'Oeste — la radiación exigente',
+    ]) {
+      expect(html).toContain(t);
+    }
+    // Y los cuatro paneles tienen id propio: uno compartido sería id duplicado.
+    expect((html.match(/id="brujula-panel-/g) ?? []).length).toBe(4);
+  });
+
+  test('el menú móvil se puede recorrer en una pantalla baja', async ({ browser }, info) => {
+    test.skip(info.project.name !== 'movil', 'sólo aplica bajo el quiebre de 1040 px');
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 600 } });
+    const page = await ctx.newPage();
+    await saltarTelon(page);
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Abrir menú' }).click();
+    await page.waitForTimeout(600);
+    const panel = page.locator('#cjMenu');
+    await expect(panel).toHaveCSS('overflow-y', 'auto');
+    // El CTA del final tiene que ser alcanzable de verdad.
+    const cta = page.getByRole('link', { name: 'Sumarme por WhatsApp' });
+    await cta.scrollIntoViewIfNeeded();
+    await expect(cta).toBeInViewport();
+    await ctx.close();
+  });
+
+  test('el botón flotante no tapa la última línea del pie', async ({ page }) => {
+    await saltarTelon(page);
+    await page.goto('/');
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(900);
+    const solapa = await page.evaluate(() => {
+      const fab = document.getElementById('cjWa')!.getBoundingClientRect();
+      const linea = [...document.querySelectorAll('footer span')]
+        .find((s) => s.textContent?.includes('Poppins'))!
+        .getBoundingClientRect();
+      const x = Math.max(0, Math.min(fab.right, linea.right) - Math.max(fab.left, linea.left));
+      const y = Math.max(0, Math.min(fab.bottom, linea.bottom) - Math.max(fab.top, linea.top));
+      return (x * y) / (linea.width * linea.height);
+    });
+    expect(solapa).toBe(0);
+  });
+
   test('ningún objetivo interactivo baja del mínimo de 24×24 (WCAG 2.5.8)', async ({ page }) => {
     await saltarTelon(page);
     await page.goto('/');

@@ -4,6 +4,13 @@
  * costo sostenido cero una vez que la sección ya entró.
  */
 let io: IntersectionObserver | null = null;
+/**
+ * Segundo observador, con un margen amplio, que sólo enciende el will-change
+ * poco antes de que la pieza entre. Encenderlo de entrada en todos promovía
+ * 65 capas de golpe durante la carga, y las que nunca llegaban a intersectar
+ * se quedaban con la promesa colgada para siempre.
+ */
+let armador: IntersectionObserver | null = null;
 let reducido = false;
 
 const MARCA_OBSERVADO = 'data-rv-obs';
@@ -21,6 +28,21 @@ export function iniciarRevelador(sinMovimiento: boolean): void {
     return;
   }
 
+  if (!armador) {
+    armador = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          const el = e.target as HTMLElement;
+          if (e.isIntersecting) {
+            if (!el.hasAttribute('data-rv')) el.style.willChange = 'opacity, transform';
+          } else if (!el.hasAttribute('data-rv')) {
+            el.style.willChange = 'auto';
+          }
+        }
+      },
+      { rootMargin: '350px 0px 350px 0px' },
+    );
+  }
   if (!io) {
     io = new IntersectionObserver(
       (entradas) => {
@@ -29,6 +51,7 @@ export function iniciarRevelador(sinMovimiento: boolean): void {
           const el = e.target as HTMLElement;
           el.setAttribute('data-rv', '1');
           io?.unobserve(el);
+          armador?.unobserve(el);
           window.setTimeout(() => {
             el.style.willChange = 'auto';
           }, 1400);
@@ -49,12 +72,10 @@ export function observarNuevos(): void {
     return;
   }
   if (!io) return;
-  const nuevos = document.querySelectorAll<HTMLElement>(
-    `[data-reveal]:not([${MARCA_OBSERVADO}])`,
-  );
+  const nuevos = document.querySelectorAll<HTMLElement>(`[data-reveal]:not([${MARCA_OBSERVADO}])`);
   nuevos.forEach((el) => {
     el.setAttribute(MARCA_OBSERVADO, '1');
-    el.style.willChange = 'opacity, transform';
+    armador?.observe(el);
     io?.observe(el);
   });
 }
@@ -62,5 +83,7 @@ export function observarNuevos(): void {
 export function detenerRevelador(): void {
   io?.disconnect();
   io = null;
+  armador?.disconnect();
+  armador = null;
   document.documentElement.removeAttribute('data-cj-vivo');
 }

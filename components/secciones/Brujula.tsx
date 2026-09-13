@@ -69,7 +69,7 @@ export default function Brujula() {
                   role="tab"
                   id={`brujula-tab-${x.letra}`}
                   aria-selected={activa === i}
-                  aria-controls="brujula-panel"
+                  aria-controls={`brujula-panel-${x.letra}`}
                   tabIndex={activa === i ? 0 : -1}
                   onClick={() => setActiva(i)}
                   className={clsx(
@@ -93,24 +93,33 @@ export default function Brujula() {
             </div>
           </Revelar>
 
-          <Revelar
-            demora={110}
-            className="flex flex-col gap-[18px]"
-            id="brujula-panel"
-            role="tabpanel"
-            aria-labelledby={`brujula-tab-${o.letra}`}
-            tabIndex={0}
-          >
-            <h3 className="m-0 text-[clamp(20px,2.4vw,26px)] font-light text-borgona">
-              {o.titulo}
-            </h3>
-            <p className="m-0 text-[15px] leading-[1.78] text-tinta-suave">{o.texto}</p>
-            <div className="border-l-2 border-pino bg-white px-5 py-[18px]">
-              <span className="mb-[7px] block text-[9px] uppercase tracking-[.22em] text-gris-dato">
-                Test de sombra
-              </span>
-              <p className="m-0 text-[13.5px] leading-[1.7] text-tinta">{o.test}</p>
-            </div>
+          {/* Los cuatro paneles se renderizan en el servidor y se ocultan con
+              `hidden`. Pintar sólo el activo dejaba fuera del índice el 75 % del
+              contenido de la sección: tres párrafos y tres tests de sombra que
+              llms.txt le promete a los modelos. */}
+          <Revelar demora={110} className="flex flex-col">
+            {ORIENTACIONES.map((x, i) => (
+              <div
+                key={x.letra}
+                id={`brujula-panel-${x.letra}`}
+                role="tabpanel"
+                aria-labelledby={`brujula-tab-${x.letra}`}
+                tabIndex={0}
+                hidden={activa !== i}
+                className="flex flex-col gap-[18px]"
+              >
+                <h3 className="m-0 text-[clamp(20px,2.4vw,26px)] font-light text-borgona">
+                  {x.titulo}
+                </h3>
+                <p className="m-0 text-[15px] leading-[1.78] text-tinta-suave">{x.texto}</p>
+                <div className="border-l-2 border-pino bg-white px-5 py-[18px]">
+                  <span className="mb-[7px] block text-[9px] uppercase tracking-[.22em] text-gris-dato">
+                    Test de sombra
+                  </span>
+                  <p className="m-0 text-[13.5px] leading-[1.7] text-tinta">{x.test}</p>
+                </div>
+              </div>
+            ))}
           </Revelar>
         </div>
       </div>

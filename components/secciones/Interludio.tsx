@@ -80,13 +80,15 @@ export default function Interludio() {
               <source src="/assets/video/pradera.mp4" type="video/mp4" />
             </video>
           ) : (
+            /* Mismo archivo que el atributo poster del <video>: sin
+               `unoptimized` serían dos URLs distintas y dos descargas. */
             <Image
               src="/assets/video/pradera-poster.jpg"
               alt=""
               aria-hidden="true"
               fill
               sizes="100vw"
-              quality={88}
+              unoptimized
               className="object-cover"
             />
           )}

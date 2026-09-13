@@ -63,7 +63,9 @@ export const metadata: Metadata = {
     title: 'Cultura de Jardín — El jardín como acto de presencia',
     description:
       'Taxonomía binomial, láminas botánicas y manejo estacional real para el hemisferio sur.',
-    images: ['/og.jpg'],
+    images: [
+      { url: '/og.jpg', alt: 'Pradera de narcisos naturalizados junto a un arroyo de montaña' },
+    ],
   },
   robots: {
     index: true,

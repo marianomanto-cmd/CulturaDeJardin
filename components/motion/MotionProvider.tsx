@@ -67,6 +67,7 @@ export default function MotionProvider() {
     let ultimoOculto: boolean | null = null;
     let ultimaSeccion: string | null = null;
     let yPrevia = 0;
+    let heroEnRango = true;
 
     const pintar = () => {
       const y = window.scrollY || raiz.scrollTop || 0;
@@ -83,8 +84,13 @@ export default function MotionProvider() {
       }
 
       // Parallax del masthead: la foto se mueve a 0,24 del scroll.
-      if (heroImg && y < vh * 1.4) {
-        heroImg.style.transform = `translate3d(0,${(y * 0.24).toFixed(2)}px,0)`;
+      if (heroImg) {
+        const enRango = y < vh * 1.4;
+        if (enRango) heroImg.style.transform = `translate3d(0,${(y * 0.24).toFixed(2)}px,0)`;
+        if (enRango !== heroEnRango) {
+          heroEnRango = enRango;
+          heroImg.style.willChange = enRango ? 'transform' : 'auto';
+        }
       }
 
       // Parallax genérico de las fotos de sección.
@@ -156,6 +162,22 @@ export default function MotionProvider() {
         if (mitad > 0) cinta.style.animationDuration = `${Math.max(28, mitad / 42)}s`;
       }
     };
+    // Fuera de pantalla la cinta no aporta nada y sigue componiendo una capa
+    // enorme en cada frame.
+    let ioCinta: IntersectionObserver | null = null;
+    if (cintas.length && typeof IntersectionObserver !== 'undefined') {
+      ioCinta = new IntersectionObserver(
+        (entradas) => {
+          for (const e of entradas) {
+            const el = e.target as HTMLElement;
+            el.style.animationPlayState = e.isIntersecting ? '' : 'paused';
+            el.style.willChange = e.isIntersecting ? 'transform' : 'auto';
+          }
+        },
+        { rootMargin: '200px 0px' },
+      );
+      cintas.forEach((c) => ioCinta?.observe(c));
+    }
     if (cintas.length) {
       medirCintas();
       window.setTimeout(medirCintas, 900);
@@ -212,6 +234,7 @@ export default function MotionProvider() {
       window.removeEventListener('resize', alRedimensionar);
       window.removeEventListener('scroll', alScroll);
       roMarquesina?.disconnect();
+      ioCinta?.disconnect();
       detenerRevelador();
       registrarLenis(null);
       lenis?.destroy();

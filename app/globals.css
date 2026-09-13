@@ -64,7 +64,9 @@
     color: var(--color-papel);
   }
 
-  :where(a, button, input, summary):focus-visible {
+  /* El :not deja afuera los tabindex="-1", que sólo se enfocan por script
+     (el destino de un ancla, el roving de la brújula, el video). */
+  :where(a, button, input, summary, [tabindex]:not([tabindex='-1'])):focus-visible {
     outline: 2px solid var(--color-pino);
     outline-offset: 3px;
     border-radius: 2px;
@@ -490,6 +492,12 @@
     position: relative;
     overflow: hidden;
   }
+  /* El anillo va por dentro: con offset 0 los bordes caen fuera del viewport
+     o bajo la parte transparente de la máscara lateral. */
+  .cj-marquesina-wrap:focus-visible {
+    outline-color: var(--color-pino-claro);
+    outline-offset: -3px;
+  }
   .cj-marquesina {
     display: flex;
     width: max-content;
@@ -859,7 +867,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* «safe» ancla al borde cuando el contenido no entra, en vez de
+       desbordarlo simétricamente y dejar el CTA fuera de la pantalla. */
+    justify-content: safe center;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 90px clamp(24px, 7vw, 48px) 48px;
     background: var(--color-noche);
     opacity: 0;
@@ -868,6 +880,12 @@
     transition:
       opacity 0.5s ease,
       transform 0.6s var(--ease-cj);
+  }
+  /* Respaldo para navegadores sin la palabra clave «safe». */
+  @media (max-height: 720px) {
+    .cj-menu {
+      justify-content: flex-start;
+    }
   }
   .cj-menu[data-abierto='1'] {
     opacity: 1;

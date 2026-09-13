@@ -15,7 +15,7 @@ const ROTULO = 'text-[9px] uppercase tracking-[.24em] text-[rgba(244,239,230,.62
 
 export default function Pie() {
   return (
-    <footer className="cj-sobre-oscuro relative overflow-hidden bg-noche px-[clamp(20px,5vw,64px)] pb-9 pt-[clamp(60px,8vw,110px)]">
+    <footer className="cj-sobre-oscuro relative overflow-hidden bg-noche px-[clamp(20px,5vw,64px)] pb-[calc(64px+clamp(16px,2.6vw,32px))] pt-[clamp(60px,8vw,110px)]">
       <div className="cj-wrap">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] items-start gap-[clamp(28px,4vw,56px)]">
           <Revelar className="flex flex-col gap-5">

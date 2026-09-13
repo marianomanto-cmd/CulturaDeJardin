@@ -1,5 +1,7 @@
 export const SITIO = {
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://culturadejardin.com',
+  // Sin la barra final: una de más produce doble barra en el sitemap,
+  // en robots y en todos los @id del JSON-LD.
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://culturadejardin.com').replace(/\/+$/, ''),
   nombre: 'Cultura de Jardín',
   lema: 'Un Estilo de Vida',
   locale: 'es_AR',

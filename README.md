@@ -166,8 +166,9 @@ galería apunta a la foto que de verdad muestra esa especie.
 ## Hallazgos de la revisión adversarial
 
 Seis dimensiones buscaron defectos en paralelo y cada hallazgo pasó por un
-agente que intentaba refutarlo. De 44 reportados, 12 sobrevivieron y están
-corregidos:
+agente que intentaba refutarlo. De 44 reportados, 17 sobrevivieron a la
+refutación y 13 más se verificaron a mano después, midiendo en el navegador.
+Todo lo confirmado está corregido:
 
 | Qué estaba mal | Dónde |
 |---|---|
@@ -183,8 +184,27 @@ corregidos:
 | El móvil nunca recibía la variante liviana del video | `components/secciones/Interludio.tsx` |
 | Relevo, Canteros y Brújula habían perdido la curva `--ease-cj` | tres secciones |
 | El calendario interpolaba en 500 ms en vez de los 550 que fija el handoff | `components/secciones/Relevo.tsx` |
+| Tres de las cuatro orientaciones de la brújula no existían en el HTML servido | `components/secciones/Brujula.tsx` |
+| El menú móvil no scrolleaba: en pantallas bajas el CTA quedaba inalcanzable | `app/globals.css` |
+| El botón flotante tapaba de forma permanente la última línea del pie | `components/secciones/Pie.tsx` |
+| La marquesina recibía el foco sin indicador visible (contraste 1,01:1) | `app/globals.css` |
 
-Cada uno tiene su prueba de regresión en `tests/sitio.spec.ts`.
+Y sobre peso, medido antes y después:
+
+| | Antes | Después |
+|---|---|---|
+| `cj-mark.png`, el recurso más pesado de la carga inicial | 155 KB | 31 KB |
+| Póster del interludio | 2 pedidos, 129 KB | 1 pedido, 55 KB |
+| Capas promovidas al terminar la carga | 73 | 13 |
+| `will-change` colgados tras recorrer la página | 20 | 6 |
+| Foto de Canteros en tablet (768 px, retina) | candidato 1920 | candidato 828 |
+
+El monograma se usa sólo como máscara CSS, así que se redujo a 1040 px con
+paleta: para una máscara lo único que cuenta es el alfa. La marquesina, además,
+pausa su animación cuando sale de pantalla en vez de componer una capa de
+5202×484 px en cada frame para siempre.
+
+Cada arreglo tiene su prueba de regresión en `tests/sitio.spec.ts`.
 
 ## Desvíos respecto del handoff, y por qué
 

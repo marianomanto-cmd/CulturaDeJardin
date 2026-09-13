@@ -74,7 +74,7 @@ export default function Canteros() {
                     src={e.img}
                     alt={e.alt}
                     fill
-                    sizes="(max-width:1040px) 100vw, 620px"
+                    sizes="(max-width:720px) 100vw, (max-width:1040px) 50vw, 620px"
                     quality={92}
                     loading="lazy"
                     className="cj-foto"

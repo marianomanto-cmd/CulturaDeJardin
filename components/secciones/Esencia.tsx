@@ -47,7 +47,7 @@ export default function Esencia() {
               src="/assets/img/lilium-macizo.webp"
               alt="Iris germanica púrpura en floración sobre su mata de hojas ensiformes"
               proporcion="4/5"
-              sizes="(max-width:1040px) 100vw, 640px"
+              sizes="(max-width:830px) 100vw, (max-width:1040px) 50vw, 640px"
               parallax={0.08}
               zoomHover
             />
