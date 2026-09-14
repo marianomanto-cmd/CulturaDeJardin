@@ -13,7 +13,7 @@ export default function Preguntas() {
     <section id="preguntas" data-sec="preguntas" className="cj-seccion cj-seccion--blanco">
       <div className="cj-wrap">
         <Revelar className="mb-[clamp(30px,4vw,48px)] max-w-[58ch]">
-          <span className="cj-antetitulo">10 · Interrogantes Clave</span>
+          <span className="cj-antetitulo">12 · Interrogantes Clave</span>
           <TextoRevelado como="h2" className="cj-titulo" texto="Las dudas reales del cultivador" />
         </Revelar>
 

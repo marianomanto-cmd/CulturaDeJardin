@@ -20,7 +20,7 @@ export default function Canteros() {
     <section id="canteros" data-sec="canteros" className="cj-seccion cj-seccion--blanco">
       <div className="cj-wrap">
         <Revelar className="mb-[clamp(30px,4vw,52px)] max-w-[58ch]">
-          <span className="cj-antetitulo">05 · Diseño de Canteros</span>
+          <span className="cj-antetitulo">06 · Diseño de Canteros</span>
           <TextoRevelado como="h2" className="cj-titulo" texto="Tres estratos, una sola escena" />
           <p className="cj-cuerpo">
             Escala adulta, repetición de matrices vegetales y armonización de texturas finas, medias

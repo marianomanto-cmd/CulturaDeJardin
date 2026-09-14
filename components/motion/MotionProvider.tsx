@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { BREAKPOINT } from '@/lib/constantes';
 import { iniciarRevelador, detenerRevelador } from '@/lib/revelar';
-import { registrarLenis, prefiereMenosMovimiento, irAConFoco } from '@/lib/scroll';
+import { anclaInterna, irAConFoco, prefiereMenosMovimiento, registrarLenis } from '@/lib/scroll';
 
 interface Capa {
   el: HTMLElement;
@@ -143,12 +143,14 @@ export default function MotionProvider() {
       ) {
         return;
       }
-      const a = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      const a = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a[href]');
       if (!a) return;
       const href = a.getAttribute('href');
-      if (!href || href === '#' || !document.querySelector(href)) return;
+      if (!href) return;
+      const hash = anclaInterna(href);
+      if (!hash) return;
       e.preventDefault();
-      irAConFoco(href);
+      irAConFoco(hash);
     };
     document.addEventListener('click', alClic);
 

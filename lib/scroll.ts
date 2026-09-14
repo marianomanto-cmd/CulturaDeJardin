@@ -51,6 +51,20 @@ export function irA(destino: string): void {
 }
 
 /**
+ * Decide si un enlace apunta a un ancla de la página que ya estamos viendo.
+ * Las anclas de la home se escriben absolutas (`/#relevo`) para que sirvan
+ * desde cualquier página: acá dentro se comportan como ancla, y desde una
+ * interior quedan como navegación normal para que Next haga su trabajo.
+ */
+export function anclaInterna(href: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const hash = href.startsWith('#') ? href : href.startsWith('/#') ? href.slice(1) : null;
+  if (!hash) return null;
+  if (!href.startsWith('#') && window.location.pathname !== '/') return null;
+  return document.querySelector(hash) ? hash : null;
+}
+
+/**
  * Navegación interna completa: viaje, hash y foco.
  *
  * Mover el foco es lo que convierte un ancla en una navegación de verdad. Sin

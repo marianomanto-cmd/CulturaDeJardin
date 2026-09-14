@@ -247,18 +247,44 @@ export const FAQS: readonly Pregunta[] = [
   },
 ];
 
-/** Anclas de la navegación. El número es el de la sección en la página. */
-export const SECCIONES: readonly { href: string; label: string; num: string }[] = [
-  { href: '#esencia', label: 'Esencia', num: '01' },
-  { href: '#compendio', label: 'Compendio', num: '03' },
-  { href: '#relevo', label: 'Relevo', num: '04' },
-  { href: '#canteros', label: 'Canteros', num: '05' },
-  { href: '#brujula', label: 'Brújula', num: '06' },
-  { href: '#laminas', label: 'Láminas', num: '07' },
-  { href: '#historias', label: 'Historias', num: '08' },
-  { href: '#descargas', label: 'Descargas', num: '09' },
-  { href: '#preguntas', label: 'Preguntas', num: '10' },
+/**
+ * Navegación. Las anclas de la home se escriben absolutas (`/#x`) para que
+ * también funcionen desde las páginas interiores: el manejador de clics las
+ * trata como ancla interna cuando ya estamos en la home, y como navegación
+ * normal cuando no.
+ */
+export interface Enlace {
+  href: string;
+  label: string;
+  num: string;
+}
+
+/** Páginas propias del sitio. */
+export const NAV_PAGINAS: readonly Enlace[] = [
+  { href: '/servicios', label: 'Servicios', num: '01' },
+  { href: '/productos', label: 'Productos', num: '02' },
+  { href: '/proceso', label: 'Proceso', num: '03' },
 ];
 
-/** Las ocho anclas que muestra la barra de escritorio. */
-export const NAV_DESKTOP = SECCIONES.filter((s) => s.href !== '#brujula');
+/** Secciones de la home. El número es el de la sección en la página. */
+export const SECCIONES: readonly Enlace[] = [
+  { href: '/#esencia', label: 'Esencia', num: '01' },
+  { href: '/#servicios', label: 'Servicios', num: '02' },
+  { href: '/#compendio', label: 'Compendio', num: '04' },
+  { href: '/#relevo', label: 'Relevo', num: '05' },
+  { href: '/#canteros', label: 'Canteros', num: '06' },
+  { href: '/#brujula', label: 'Brújula', num: '07' },
+  { href: '/#laminas', label: 'Láminas', num: '08' },
+  { href: '/#historias', label: 'Historias', num: '10' },
+  { href: '/#descargas', label: 'Descargas', num: '11' },
+  { href: '/#preguntas', label: 'Preguntas', num: '12' },
+];
+
+/** Lo que muestra la barra de escritorio: las páginas y cuatro anclas. */
+export const NAV_DESKTOP: readonly Enlace[] = [
+  ...NAV_PAGINAS,
+  { href: '/#compendio', label: 'Compendio', num: '04' },
+  { href: '/#relevo', label: 'Relevo', num: '05' },
+  { href: '/#laminas', label: 'Láminas', num: '08' },
+  { href: '/#preguntas', label: 'Preguntas', num: '12' },
+];

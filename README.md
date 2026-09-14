@@ -1,11 +1,21 @@
 # Cultura de Jardín
 
-Sitio single page, mobile first. Next.js 15 (App Router) · React 19 · TypeScript
-estricto · Tailwind v4 · Lenis.
+Sitio mobile first. Next.js 15 (App Router) · React 19 · TypeScript estricto ·
+Tailwind v4 · Lenis.
 
-Implementación del paquete de handoff v1.0 (septiembre 2026): once secciones que
-se dinamizan al scroll, precedidas por un telón de entrada que entinta el
-monograma y se abre hacia el masthead. Toda la navegación es interna por anclas.
+Arranca en el paquete de handoff v1.0 (septiembre 2026) —portada de doce
+secciones que se dinamizan al scroll, precedida por un telón que entinta el
+monograma— y se extiende con tres páginas propias para la oferta comercial.
+
+| Ruta         | Qué hay                                                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/`          | Portada: manifiesto, servicios en compacto, compendio, relevo, canteros, brújula, láminas, productos en compacto, historias, descargas e interrogantes |
+| `/servicios` | Las tres áreas en detalle: diseño de canteros, consultoría fenológica y formación                                                                      |
+| `/productos` | Catálogo: piezas físicas y editoriales, y recursos digitales                                                                                           |
+| `/proceso`   | Las cinco etapas, del primer contacto al registro sostenido                                                                                            |
+
+Los servicios entran temprano en la portada a propósito: quien llega tiene que
+entender qué se ofrece antes de meterse en el compendio.
 
 ## Puesta en marcha
 
@@ -40,13 +50,17 @@ origen: `BASE=https://… npx playwright test`.
 
 ```
 app/
-  layout.tsx        fuentes, metadatos, JSON-LD y la compuerta previa al pintado
-  page.tsx          las once secciones dentro de un único <main>
+  layout.tsx        chrome compartido, fuentes, metadatos, JSON-LD y la compuerta
+  page.tsx          la portada: secciones dentro de un único <main>
+  servicios/        las tres áreas, con datos estructurados Service por servicio
+  productos/        catálogo físico y digital
+  proceso/          las cinco etapas
   globals.css       tokens de marca en @theme y el sistema de clases .cj-*
   robots.ts         permite explícitamente GPTBot, ClaudeBot, PerplexityBot…
   sitemap.ts        una sola URL canónica: las secciones son fragmentos
 components/
-  Telon.tsx         secuencia de entrada, una vez por sesión
+  PortadaInterior.tsx  portada corta de las páginas interiores
+  Telon.tsx         secuencia de entrada, una vez por sesión y sólo en la portada
   SiteNav.tsx       navegación; el quiebre de 1040 px lo resuelve CSS
   Acordeon.tsx      isla cliente de la sección de interrogantes
   motion/           primitivas de movimiento (ver abajo)
@@ -89,6 +103,12 @@ Tres decisiones que conviene conocer antes de tocar esto:
   llega a montar. Sin JavaScript no se oculta nada.
 - **Las clases propias viven en `@layer components`**, para que las utilidades
   de Tailwind sigan ganando cuando una sección las usa.
+- **Las anclas de la portada se escriben absolutas** (`/#relevo`). `anclaInterna()`
+  decide en cada clic si el destino está en la página actual —y entonces lo
+  resuelve Lenis— o si hay que dejar que Next navegue. El layout no se desmonta
+  al cambiar de ruta, así que `RutaMotion` vuelve a observar los reveals, lleva
+  el scroll arriba y, si la URL trae ancla, hace el viaje él mismo: el salto
+  nativo del navegador y Lenis se pisan.
 
 `prefers-reduced-motion` apaga el telón, los reveals, el parallax, la marquesina
 y el cursor. El contenido no depende de ninguno de ellos.

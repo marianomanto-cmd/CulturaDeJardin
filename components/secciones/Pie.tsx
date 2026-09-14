@@ -3,11 +3,14 @@ import FormularioBitacora from '@/components/secciones/FormularioBitacora';
 import { SITIO } from '@/data/sitio';
 
 // Rótulos propios del pie: más largos que los de la navegación, que abrevia.
+/** Absolutos: el pie vive en el layout y se ve desde cualquier página. */
 const ENLACES: readonly { href: string; texto: string }[] = [
-  { href: '#esencia', texto: 'Nuestra esencia' },
-  { href: '#compendio', texto: 'Compendio taxonómico' },
-  { href: '#relevo', texto: 'Ciclos y relevo' },
-  { href: '#laminas', texto: 'Láminas botánicas' },
+  { href: '/servicios', texto: 'Servicios' },
+  { href: '/productos', texto: 'Productos' },
+  { href: '/proceso', texto: 'El proceso' },
+  { href: '/#compendio', texto: 'Compendio taxonómico' },
+  { href: '/#relevo', texto: 'Ciclos y relevo' },
+  { href: '/#laminas', texto: 'Láminas botánicas' },
 ];
 
 // .42 de alfa sobre noche da 3,5:1 en 9 px; .62 lo lleva a 6,7:1.
@@ -36,8 +39,8 @@ export default function Pie() {
           </Revelar>
 
           <Revelar demora={80} className="flex flex-col gap-3">
-            <span className={ROTULO}>Secciones</span>
-            <nav aria-label="Secciones del sitio" className="flex flex-col">
+            <span className={ROTULO}>El sitio</span>
+            <nav aria-label="Mapa del sitio" className="flex flex-col">
               {ENLACES.map((enlace) => (
                 <a
                   key={enlace.href}

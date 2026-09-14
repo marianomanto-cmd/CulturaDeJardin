@@ -10,7 +10,7 @@ export default function Descargas() {
     <section id="descargas" data-sec="descargas" className="cj-seccion cj-seccion--borgona">
       <div className="cj-wrap">
         <Revelar className="mb-[clamp(30px,4vw,48px)] max-w-[56ch]">
-          <span className="cj-antetitulo cj-antetitulo--rosa">09 · Material Imprimible</span>
+          <span className="cj-antetitulo cj-antetitulo--rosa">11 · Material Imprimible</span>
           <TextoRevelado
             como="h2"
             className="cj-titulo cj-titulo--claro"

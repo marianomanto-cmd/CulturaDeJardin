@@ -1,9 +1,40 @@
 # Cultura de Jardín
 
-> Proyecto editorial de jardinería y paisajismo para el hemisferio sur.
-> Compendio taxonómico, láminas botánicas y guías de manejo estacional.
+> Proyecto editorial y estudio de jardinería y paisajismo para el hemisferio sur.
+> Compendio taxonómico, láminas botánicas, guías de manejo estacional y servicios
+> de diseño de canteros, consultoría fenológica y formación.
 
-## Contenido principal
+## Servicios
+
+- [Servicios](/servicios): las tres áreas de trabajo.
+- [Asesoría y diseño de canteros](/servicios#diseno-de-canteros): proyectos por etapas
+  adaptados a pleno sol, media sombra o sombra, con matrices de bajo mantenimiento,
+  paleta binomial por estratos y croquis a escala con distancias adultas.
+- [Planificación y consultoría fenológica](/servicios#consultoria-fenologica): calendarios
+  de plantación y relevo estacional que combinan especies OIP (Otoño–Invierno–Primavera)
+  y PVO (Primavera–Verano–Otoño) para lograr floración continua sin vacíos vegetativos.
+- [Formación y talleres](/servicios#formacion-y-talleres): botánica aplicada,
+  multiplicación agámica —esquejes leñosos y semileñosos, acodo, división de matas—,
+  podas estacionales, manejo del suelo, florigrafía e historia del paisaje.
+
+## Productos
+
+- [Productos](/productos): catálogo completo.
+- [Piezas físicas y editoriales](/productos#fisicos): agenda bitácora de registro
+  fenológico de doce meses con códigos QR, colección de láminas botánicas de arte
+  naturalista con disección anatómica, y papelería de recolección de semillas.
+- [Recursos digitales](/productos#digitales): planillas de seguimiento fenológico,
+  inventario de lotes de semillas, fichas binomiales por familia y guías temáticas
+  de compostaje, sustratos, poda y multiplicación.
+
+## El proceso
+
+- [El proceso](/proceso): cinco etapas, del primer contacto al registro sostenido.
+  Descubrimiento; diagnóstico del terreno con brújula solar y test de sombra;
+  propuesta con croquis zonificado y cronograma OIP / PVO; implementación y labores
+  de campo; registro fenológico continuo.
+
+## Contenido de la portada
 
 - [Nuestra esencia](/#esencia): el jardín como refugio cotidiano y acto de presencia.
 - [Pensamiento jardinero](/#pensamiento): taxonomía y lámina en la misma página, relevo
@@ -26,4 +57,4 @@
 
 ## Contacto
 
-- WhatsApp: bitácora estacional y planillas de registro fenológico.
+- WhatsApp: consultas de servicios, pedidos de productos y bitácora estacional.

@@ -63,7 +63,7 @@ export default function Compendio() {
       <div className="cj-wrap">
         <Revelar className="mb-8 flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-[56ch]">
-            <span className="cj-antetitulo">03 · Compendio Taxonómico</span>
+            <span className="cj-antetitulo">04 · Compendio Taxonómico</span>
             <TextoRevelado como="h2" className="cj-titulo" texto="Fichas botánicas binomiales" />
             <p className="cj-cuerpo">
               Organizadas por familia, requerimiento lumínico, régimen hídrico y comportamiento

@@ -13,7 +13,7 @@ export default function Historias() {
             texto="Historias de raíces"
             paso={70}
           />
-          <span className="cj-antetitulo">08 · Memoria Paisajística</span>
+          <span className="cj-antetitulo">10 · Memoria Paisajística</span>
         </Revelar>
 
         {/* El gap de 1px sobre el fondo borgoña translúcido dibuja las divisorias de la grilla. */}

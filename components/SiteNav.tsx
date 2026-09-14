@@ -1,10 +1,12 @@
 'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { NAV_DESKTOP, SECCIONES } from '@/data/contenido';
+import { NAV_DESKTOP, NAV_PAGINAS, SECCIONES } from '@/data/contenido';
 import { HREF_WA } from '@/data/sitio';
-import { bloquearScroll, irAConFoco, liberarScroll } from '@/lib/scroll';
+import { anclaInterna, bloquearScroll, irAConFoco, liberarScroll } from '@/lib/scroll';
 
 /**
  * Navegación. El único quiebre estructural del sitio —1040 px— lo resuelve
@@ -16,6 +18,7 @@ export default function SiteNav() {
   const [abierto, setAbierto] = useState(false);
   const burger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const ruta = usePathname();
 
   /** Al cerrar hay que reubicar el foco: si el panel se vuelve inert con el
    *  foco adentro, se cae al <body> y el teclado pierde su lugar. */
@@ -25,6 +28,11 @@ export default function SiteNav() {
       burger.current?.focus();
     }
   }, []);
+
+  // Cambiar de página cierra el menú: si no, queda tapando la página nueva.
+  useEffect(() => {
+    setAbierto(false);
+  }, [ruta]);
 
   useEffect(() => {
     const raiz = document.documentElement;
@@ -84,13 +92,23 @@ export default function SiteNav() {
     return () => mq.removeEventListener('change', alCambiar);
   }, []);
 
-  const irYCerrar = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  /**
+   * Un mismo clic hace dos cosas distintas según dónde estemos: si el destino
+   * es un ancla de esta misma página la resuelve Lenis, y si no, deja que
+   * Next navegue.
+   */
+  const alClic = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const hash = anclaInterna(href);
+    if (!hash) {
+      cerrar(false);
+      return;
+    }
     e.preventDefault();
-    // El foco viaja al destino, así que acá no se devuelve a la hamburguesa.
     cerrar(false);
-    // Esperamos a que el scroll se libere antes de pedirle a Lenis el viaje.
-    window.setTimeout(() => irAConFoco(href), 60);
+    window.setTimeout(() => irAConFoco(hash), 60);
   };
+
+  const activa = (href: string) => href !== '/' && ruta === href;
 
   return (
     <>
@@ -98,11 +116,11 @@ export default function SiteNav() {
 
       <header
         id="cjNav"
-        data-solido="0"
+        data-solido={ruta === '/' ? '0' : '1'}
         data-oculto="0"
         className="fixed inset-x-0 top-0 z-[95] flex items-center justify-between gap-3.5 border-b border-transparent px-[clamp(14px,3.4vw,44px)] py-[clamp(11px,1.5vw,18px)]"
       >
-        <a href="#cjHero" onClick={(e) => irYCerrar(e, '#cjHero')} className="flex-none">
+        <Link href="/" onClick={(e) => alClic(e, '/#cjHero')} className="flex-none">
           <span className="cj-solo-lectores">Cultura de Jardín — volver al inicio</span>
           <span
             id="cjNavMark"
@@ -113,24 +131,25 @@ export default function SiteNav() {
               mask: "url('/assets/cj-mark.png') no-repeat center/contain",
             }}
           />
-        </a>
+        </Link>
 
         <nav
           id="cjLinks"
-          aria-label="Secciones"
-          className="cj-solo-desk items-center gap-[clamp(11px,1.5vw,22px)] min-w-0 flex-nowrap"
+          aria-label="Principal"
+          className="cj-solo-desk min-w-0 flex-nowrap items-center gap-[clamp(11px,1.5vw,22px)]"
         >
           {NAV_DESKTOP.map((s) => (
-            <a
+            <Link
               key={s.href}
               href={s.href}
-              data-nl={s.href.slice(1)}
-              data-activo="0"
-              onClick={(e) => irYCerrar(e, s.href)}
+              data-nl={s.href.startsWith('/#') ? s.href.slice(2) : undefined}
+              data-activo={activa(s.href) ? '1' : '0'}
+              aria-current={activa(s.href) ? 'page' : undefined}
+              onClick={(e) => alClic(e, s.href)}
               className="cj-nav-link"
             >
               {s.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -155,24 +174,42 @@ export default function SiteNav() {
         inert={!abierto}
         className="cj-menu"
       >
-        <nav aria-label="Secciones" className="flex w-full max-w-[420px] flex-col gap-0.5">
-          {SECCIONES.map((s) => (
-            <a
-              key={s.href}
-              href={s.href}
-              onClick={(e) => irYCerrar(e, s.href)}
-              className="flex items-baseline gap-3.5 border-b border-[rgba(244,239,230,.12)] px-1 py-[15px] text-[21px] font-extralight tracking-[.01em] text-papel"
-            >
-              <span className="cj-dato flex-none text-[10px] text-pino-claro">{s.num}</span>
-              <span>{s.label}</span>
-            </a>
-          ))}
+        <nav aria-label="Principal" className="flex w-full max-w-[420px] flex-col gap-5">
+          <div className="flex flex-col gap-0.5">
+            <span className="cj-etiqueta-filtro mb-1 text-pino-claro">El estudio</span>
+            {NAV_PAGINAS.map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                onClick={(e) => alClic(e, s.href)}
+                aria-current={activa(s.href) ? 'page' : undefined}
+                className="cj-menu-item"
+              >
+                <span className="cj-dato flex-none text-[10px] text-pino-claro">{s.num}</span>
+                <span>{s.label}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="cj-etiqueta-filtro mb-1 text-pino-claro">El compendio</span>
+            {SECCIONES.map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                onClick={(e) => alClic(e, s.href)}
+                className="cj-menu-item cj-menu-item--chico"
+              >
+                <span className="cj-dato flex-none text-[10px] text-pino-claro">{s.num}</span>
+                <span>{s.label}</span>
+              </Link>
+            ))}
+          </div>
         </nav>
         <a
           href={HREF_WA}
           target="_blank"
           rel="noopener noreferrer"
-          className="cj-pildora cj-pildora--solida mt-[30px]"
+          className="cj-pildora cj-pildora--solida mt-7"
         >
           Sumarme por WhatsApp
         </a>

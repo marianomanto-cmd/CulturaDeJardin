@@ -18,7 +18,7 @@ export default function Laminas() {
     >
       <div className="cj-wrap px-[clamp(20px,5vw,64px)]">
         <Revelar className="mb-[clamp(30px,4vw,48px)] max-w-[58ch]">
-          <span className="cj-antetitulo cj-antetitulo--claro">07 · Galería de Láminas</span>
+          <span className="cj-antetitulo cj-antetitulo--claro">08 · Galería de Láminas</span>
           <TextoRevelado
             como="h2"
             className="cj-titulo cj-titulo--claro"

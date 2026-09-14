@@ -42,7 +42,7 @@ export default function Relevo() {
       />
       <div className="cj-wrap relative">
         <Revelar className="mb-[clamp(30px,4vw,52px)] max-w-[60ch]">
-          <span className="cj-antetitulo cj-antetitulo--claro">04 · Ciclos Herbáceos</span>
+          <span className="cj-antetitulo cj-antetitulo--claro">05 · Ciclos Herbáceos</span>
           <TextoRevelado
             como="h2"
             className="cj-titulo cj-titulo--claro"

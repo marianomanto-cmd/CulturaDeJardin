@@ -42,7 +42,7 @@ export default function Pensamiento() {
     <section id="pensamiento" data-sec="pensamiento" className="cj-seccion cj-seccion--blanco">
       <div className="cj-wrap">
         <Revelar className="mb-[clamp(34px,5vw,62px)] max-w-[62ch]">
-          <span className="cj-antetitulo">02 · Pensamiento Jardinero</span>
+          <span className="cj-antetitulo">03 · Pensamiento Jardinero</span>
           <TextoRevelado
             como="h2"
             className="cj-titulo"

@@ -12,6 +12,22 @@ async function saltarTelon(page: Page) {
   });
 }
 
+/**
+ * El texto como lo extrae un rastreador. Hace falta porque los titulares se
+ * renderizan partidos en palabras —cada una en su máscara—, así que la frase
+ * completa no aparece contigua en el HTML pero sí en el texto del documento.
+ */
+function textoDe(html: string): string {
+  return html
+    .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/g, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
 /** Recorre la página entera para disparar reveals e imágenes diferidas. */
 async function recorrer(page: Page) {
   await page.evaluate(async () => {
@@ -156,7 +172,7 @@ test.describe('Cultura de Jardín', () => {
     await expect(page.getByRole('link', { name: 'Saltar al contenido' })).toBeFocused();
     await page.keyboard.press('Enter');
     await page.waitForTimeout(900);
-    expect(await page.evaluate(() => document.activeElement?.id)).toBe('cjHero');
+    expect(await page.evaluate(() => document.activeElement?.id)).toBe('cjContenido');
 
     // Un ancla del cuerpo: foco al destino y hash en la URL. Se usa la del pie
     // porque la barra se retira al bajar y su enlace queda fuera de pantalla.
@@ -201,8 +217,9 @@ test.describe('Cultura de Jardín', () => {
     const burger = page.getByRole('button', { name: 'Abrir menú' });
     await burger.click();
     // Tabular hasta el final del ciclo tiene que volver a la hamburguesa.
+    const cantidad = await page.locator('#cjMenu a[href]').count();
     const focosDelCiclo: string[] = [];
-    for (let i = 0; i < 13; i += 1) {
+    for (let i = 0; i < cantidad + 3; i += 1) {
       await page.keyboard.press('Tab');
       focosDelCiclo.push(
         await page.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? ''),
@@ -306,6 +323,112 @@ test.describe('Cultura de Jardín', () => {
       return (x * y) / (linea.width * linea.height);
     });
     expect(solapa).toBe(0);
+  });
+
+  test('las páginas interiores existen, se sirven completas y tienen un solo h1', async ({
+    request,
+  }) => {
+    const paginas: [string, string[]][] = [
+      [
+        '/servicios',
+        [
+          'Asesoría y diseño de canteros',
+          'Planificación y consultoría fenológica',
+          'Formación y talleres',
+          'Público en general, aficionados, jardineros e interesados en el tema.',
+          'multiplicación agámica',
+        ],
+      ],
+      [
+        '/productos',
+        [
+          'Agenda Bitácora',
+          'Viaje al jardín: Bitácora de brotes y algo más',
+          'Colección de láminas botánicas',
+          'Papelería especializada y kits',
+          'Planillas técnicas y cuadros de gestión',
+          'Guías temáticas especializadas',
+        ],
+      ],
+      [
+        '/proceso',
+        [
+          'Descubrimiento y conexión',
+          'Diagnóstico y relevamiento',
+          'Lectura del entorno',
+          'Lista de deseos',
+          'Implementación y labores de campo',
+          'Registro vivo y evolución continua',
+        ],
+      ],
+    ];
+    for (const [ruta, frases] of paginas) {
+      const r = await request.get(ruta);
+      expect(r.status(), ruta).toBe(200);
+      const html = await r.text();
+      const texto = textoDe(html);
+      expect((html.match(/<h1/g) ?? []).length, `${ruta}: un solo h1`).toBe(1);
+      expect(html, `${ruta}: canonical`).toContain('rel="canonical"');
+      for (const f of frases) expect(texto, `${ruta}: «${f}»`).toContain(f);
+    }
+  });
+
+  test('los servicios declaran datos estructurados propios', async ({ request }) => {
+    const html = await (await request.get('/servicios')).text();
+    expect((html.match(/"@type":"Service"/g) ?? []).length).toBe(3);
+    expect(html).toContain('/servicios#consultoria-fenologica');
+  });
+
+  test('el sitemap lista las cuatro URLs', async ({ request }) => {
+    const xml = await (await request.get('/sitemap.xml')).text();
+    for (const u of ['/', '/servicios', '/productos', '/proceso']) {
+      expect(xml).toContain(u === '/' ? '.com/</loc>' : `${u}</loc>`);
+    }
+  });
+
+  test('la home presenta los tres servicios y lleva a su página', async ({ page }) => {
+    await saltarTelon(page);
+    await page.goto('/');
+    const seccion = page.locator('#servicios');
+    await seccion.scrollIntoViewIfNeeded();
+    await expect(seccion.getByRole('heading', { level: 3 })).toHaveCount(3);
+    await expect(seccion.getByText('01', { exact: true })).toBeVisible();
+    await seccion.getByRole('link', { name: 'Ver los servicios' }).click();
+    await page.waitForURL('**/servicios');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  });
+
+  test('el telón no corre en las páginas interiores', async ({ page }) => {
+    await page.goto('/servicios');
+    await page.waitForTimeout(700);
+    await expect(page.locator('#cjCurtain')).toBeHidden();
+    expect(
+      await page.evaluate(() => document.documentElement.hasAttribute('data-cj-curtain')),
+    ).toBe(false);
+  });
+
+  test('navegar entre páginas deja el scroll arriba y los reveals vivos', async ({ page }) => {
+    await saltarTelon(page);
+    await page.goto('/proceso');
+    await page.evaluate(() => window.scrollTo(0, 1200));
+    await page.waitForTimeout(500);
+    await page.locator('footer').getByRole('link', { name: 'Servicios' }).click();
+    await page.waitForURL('**/servicios');
+    await page.waitForTimeout(900);
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(60);
+    // Los reveals de la página nueva tienen que haberse observado.
+    expect(await page.locator('[data-reveal][data-rv-obs]').count()).toBeGreaterThan(0);
+  });
+
+  test('las páginas interiores no dejan violaciones de accesibilidad', async ({ page }) => {
+    for (const ruta of ['/servicios', '/productos', '/proceso']) {
+      await page.goto(ruta);
+      await recorrer(page);
+      const r = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+        .analyze();
+      expect(r.violations.map((v) => `${ruta}: ${v.id} (${v.nodes.length})`)).toEqual([]);
+    }
   });
 
   test('ningún objetivo interactivo baja del mínimo de 24×24 (WCAG 2.5.8)', async ({ page }) => {

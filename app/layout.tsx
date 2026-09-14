@@ -4,7 +4,11 @@ import './globals.css';
 import { SITIO } from '@/data/sitio';
 import { FAQS } from '@/data/contenido';
 import MotionProvider from '@/components/motion/MotionProvider';
+import RutaMotion from '@/components/motion/RutaMotion';
 import Cursor from '@/components/motion/Cursor';
+import SiteNav from '@/components/SiteNav';
+import BotonWhatsApp from '@/components/BotonWhatsApp';
+import Pie from '@/components/secciones/Pie';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -23,7 +27,10 @@ const rouge = Rouge_Script({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITIO.url),
-  title: 'Cultura de Jardín — Fichas botánicas, canteros y relevo estacional',
+  title: {
+    default: 'Cultura de Jardín — Fichas botánicas, canteros y relevo estacional',
+    template: '%s · Cultura de Jardín',
+  },
   description:
     'Compendio taxonómico, láminas anatómicas y guías de manejo para el hemisferio sur: ciclos OIP y PVO, canteros por estratos, orientación solar y planillas de registro fenológico descargables.',
   applicationName: SITIO.nombre,
@@ -135,7 +142,8 @@ const jsonLd = {
 const SCRIPT_COMPUERTA = `(function(){var d=document.documentElement;try{
 var q=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var v=false;try{v=sessionStorage.getItem('cj:telon:visto')==='1'}catch(e){}
-if(!q){d.setAttribute('data-cj-reveal','1');if(!v){d.setAttribute('data-cj-curtain','corriendo')}}
+var home=location.pathname==='/'||location.pathname==='';
+if(!q){d.setAttribute('data-cj-reveal','1');if(!v&&home){d.setAttribute('data-cj-curtain','corriendo')}}
 }catch(e){}
 setTimeout(function(){if(!d.hasAttribute('data-cj-vivo')){d.removeAttribute('data-cj-reveal');d.removeAttribute('data-cj-curtain')}},4000);})();`;
 
@@ -151,11 +159,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_COMPUERTA }} />
-        <a href="#cjHero" className="cj-saltar">
+        <a href="#cjContenido" className="cj-saltar">
           Saltar al contenido
         </a>
+        <SiteNav />
         {children}
+        <Pie />
+        <BotonWhatsApp />
         <MotionProvider />
+        <RutaMotion />
         <Cursor />
       </body>
     </html>
