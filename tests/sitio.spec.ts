@@ -431,6 +431,37 @@ test.describe('Cultura de Jardín', () => {
     }
   });
 
+  test('un ancla de la portada aterriza exacta desde una página interior', async ({
+    page,
+  }, info) => {
+    await saltarTelon(page);
+    await page.goto('/servicios');
+    await page.waitForTimeout(700);
+    if (info.project.name === 'movil') {
+      // Bajo el quiebre la barra de escritorio no se ve: el camino es el menú.
+      await page.getByRole('button', { name: 'Abrir menú' }).click();
+      await page.waitForTimeout(500);
+      await page
+        .locator('#cjMenu')
+        .getByRole('link', { name: /Compendio/ })
+        .click();
+    } else {
+      await page
+        .getByRole('navigation', { name: 'Principal' })
+        .first()
+        .getByRole('link', { name: 'Compendio' })
+        .click();
+    }
+    await page.waitForURL('**/#compendio');
+    // Las fotos diferidas de arriba siguen corriendo el destino mientras cargan:
+    // el viaje se reintenta hasta que el borde queda donde tiene que quedar.
+    await page.waitForTimeout(2400);
+    const top = await page.evaluate(() =>
+      Math.abs(Math.round(document.getElementById('compendio')!.getBoundingClientRect().top)),
+    );
+    expect(top).toBeLessThanOrEqual(8);
+  });
+
   test('ningún objetivo interactivo baja del mínimo de 24×24 (WCAG 2.5.8)', async ({ page }) => {
     await saltarTelon(page);
     await page.goto('/');
