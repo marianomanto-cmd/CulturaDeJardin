@@ -483,4 +483,96 @@ test.describe('Cultura de Jardín', () => {
     });
     expect(chicos).toEqual([]);
   });
+
+  test('los nombres de especie del relevo no se truncan en pantallas angostas', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'La rejilla de dos columnas sólo aplica desde 760 px.');
+    await saltarTelon(page);
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto('/');
+    await page.evaluate(() => document.getElementById('relevo')!.scrollIntoView());
+    await page.waitForTimeout(900);
+    // «Hydrangea macrophylla» pide 158 px: en la rejilla vieja entraba en 80.
+    const truncados = await page.evaluate(() =>
+      [...document.querySelectorAll('#relevo span')]
+        .filter((e) => !e.classList.contains('cj-solo-lectores') && e.children.length === 0)
+        .filter((e) => e.scrollWidth > e.clientWidth + 2)
+        .map((e) => (e.textContent || '').trim()),
+    );
+    expect(truncados).toEqual([]);
+  });
+
+  test('el CTA del menú móvil conserva su alto aunque el panel desborde', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'El panel sólo existe bajo el quiebre móvil.');
+    await saltarTelon(page);
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Abrir menú' }).tap();
+    await page.waitForTimeout(900);
+    // La columna flex comprimía a sus hijos: el CTA quedaba en 30 px con el
+    // relleno a cero. Debe medir lo mismo que cualquier píldora del sitio.
+    const alto = await page.evaluate(() => {
+      const a = document.querySelector<HTMLElement>('#cjMenu .cj-pildora')!;
+      return Math.round(a.getBoundingClientRect().height);
+    });
+    expect(alto).toBeGreaterThanOrEqual(44);
+  });
+
+  test('la cabecera tapa el panel al desplazarlo, no lo deja pasar por detrás', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'El panel sólo existe bajo el quiebre móvil.');
+    await saltarTelon(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Abrir menú' }).tap();
+    await page.waitForTimeout(900);
+    const fondo = await page.evaluate(
+      () => getComputedStyle(document.getElementById('cjNav')!).backgroundColor,
+    );
+    expect(fondo).not.toBe('rgba(0, 0, 0, 0)');
+    expect(fondo).not.toBe('transparent');
+  });
+
+  test('en puntero grueso los chips llegan al objetivo táctil de 44 px', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'La regla vive tras @media (pointer: coarse).');
+    await saltarTelon(page);
+    await page.goto('/');
+    await recorrer(page);
+    const bajos = await page.evaluate(() =>
+      [...document.querySelectorAll('.cj-chip')]
+        .map((e) => ({ t: (e.textContent || '').trim(), h: e.getBoundingClientRect().height }))
+        .filter((x) => x.h > 0 && x.h < 44)
+        .map((x) => `${x.t} ${Math.round(x.h)}`),
+    );
+    expect(bajos).toEqual([]);
+  });
+
+  test('ninguna ruta desborda horizontalmente en pantallas angostas', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'Sólo interesa bajo el quiebre móvil.');
+    await saltarTelon(page);
+    for (const ancho of [320, 390]) {
+      await page.setViewportSize({ width: ancho, height: 720 });
+      for (const ruta of ['/', '/servicios', '/productos', '/proceso']) {
+        await page.goto(ruta);
+        await recorrer(page);
+        const exceso = await page.evaluate(
+          () => document.documentElement.scrollWidth - window.innerWidth,
+        );
+        expect(exceso, `${ruta} a ${ancho}px`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
 });

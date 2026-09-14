@@ -90,13 +90,15 @@ export default function Relevo() {
             return (
               <div
                 key={f.nombre}
-                className="grid grid-cols-[minmax(92px,26%)_1fr] items-center gap-2 rounded-[3px] px-2.5 py-[9px] transition-[background] duration-500 ease-[var(--ease-cj)]"
+                className="grid grid-cols-1 items-center gap-1.5 rounded-[3px] px-2.5 py-[9px] transition-[background] duration-500 ease-[var(--ease-cj)] min-[760px]:grid-cols-[minmax(92px,26%)_1fr] min-[760px]:gap-2"
                 style={{ background: enEscena ? 'rgba(244,239,230,.055)' : 'transparent' }}
               >
-                <div className="flex min-w-0 flex-col gap-0.5 pr-3">
-                  <span className="truncate text-[13px] italic text-papel">{f.nombre}</span>
+                <div className="flex min-w-0 items-baseline gap-2 min-[760px]:flex-col min-[760px]:items-start min-[760px]:gap-0.5 min-[760px]:pr-3">
+                  <span className="text-[13px] italic text-papel min-[760px]:truncate">
+                    {f.nombre}
+                  </span>
                   <span
-                    className="cj-dato text-[9px] tracking-[.12em]"
+                    className="cj-dato flex-none text-[9px] tracking-[.12em]"
                     style={{ color: colorTexto }}
                   >
                     {f.ciclo}
@@ -132,8 +134,11 @@ export default function Relevo() {
           })}
         </div>
 
-        <div aria-hidden="true" className="mt-2.5 grid grid-cols-[minmax(92px,26%)_1fr] gap-2">
-          <span />
+        <div
+          aria-hidden="true"
+          className="mt-2.5 grid grid-cols-1 gap-2 px-2.5 min-[760px]:grid-cols-[minmax(92px,26%)_1fr] min-[760px]:px-0"
+        >
+          <span className="hidden min-[760px]:block" />
           <div className="grid grid-cols-12 gap-[3px]">
             {MESES.map((m) => (
               <span

@@ -337,6 +337,22 @@
     background: var(--color-papel);
     transition: background 0.45s ease;
   }
+  /* El monograma mide 40x34: en táctil se le extiende el área sensible a
+     44x44 con un pseudoelemento, sin desplazar nada de la cabecera. */
+  @media (pointer: coarse) {
+    #cjNav > a:first-of-type {
+      position: relative;
+    }
+    #cjNav > a:first-of-type::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 44px;
+      height: 44px;
+      transform: translate(-50%, -50%);
+    }
+  }
   #cjNav[data-solido='1'] #cjNavMark {
     background: var(--color-borgona);
   }
@@ -772,6 +788,14 @@
   .cj-chip:hover {
     transform: translateY(-1px);
   }
+  /* En pantallas táctiles el dedo pide 44 px: la píldora crece en alto sin
+     cambiar su forma ni su tipografía. En puntero fino sigue midiendo 34. */
+  @media (pointer: coarse) {
+    .cj-chip {
+      min-height: 44px;
+      padding-inline: 17px;
+    }
+  }
   .cj-chip[aria-pressed='true'] {
     background: var(--color-borgona);
     border-color: var(--color-borgona);
@@ -849,8 +873,11 @@
   html[data-cj-menu] #cjNav .cj-barra {
     color: var(--color-papel);
   }
+  /* El panel desplaza por debajo de la cabecera: si ésta fuese transparente,
+     los enlaces se verían pasar por detrás del monograma y de la cruz. El
+     fondo es el mismo noche del panel, así que tapa sin dibujar una costura. */
   html[data-cj-menu] #cjNav {
-    background: transparent;
+    background: var(--color-noche);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-bottom-color: transparent;
@@ -886,6 +913,11 @@
     .cj-menu {
       justify-content: flex-start;
     }
+  }
+  /* Columna flex con contenido más alto que la pantalla: sin esto los hijos
+     se encogen y el CTA pierde su relleno (llegaba a 30 px de alto). */
+  .cj-menu > * {
+    flex: none;
   }
   .cj-menu[data-abierto='1'] {
     opacity: 1;
